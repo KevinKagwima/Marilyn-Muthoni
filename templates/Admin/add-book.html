@@ -1,0 +1,245 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}{{ 'Edit' if book else 'New' }} Book{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="admin-breadcrumbs" aria-label="Breadcrumb">
+  <a href="#">Dashboard</a>
+  <i class="bi bi-chevron-right"></i>
+  <a href="#">Books</a>
+  <i class="bi bi-chevron-right"></i>
+  <span>{{ 'Edit' if book else 'New' }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">{{ 'Edit Book' if book else 'Add a New Book' }}</h1>
+    <p class="admin-page-sub">
+      {{ 'Update details for “' ~ book.title ~ '”.' if book else 'Fill in the details below to publish a new book.' }}
+    </p>
+  </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="admin-form" novalidate>
+  {{ form.hidden_tag() }}
+
+  <div class="admin-form-grid">
+
+    <div class="admin-form-main">
+
+      <div class="admin-card">
+        <h2 class="admin-card-title">Content</h2>
+
+        <div class="form-group">
+          {{ form.title.label(class="form-label") }}
+          {{ form.title(class="form-control form-control-lg",
+          placeholder="e.g. The Missing Piece",
+          id="bookTitle",
+          autocomplete="off") }}
+          {% for e in form.title.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.subtitle.label(class="form-label") }}
+          {{ form.subtitle(class="form-control", placeholder="Optional — e.g. A Novel") }}
+          {% for e in form.subtitle.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.synopsis.label(class="form-label") }}
+          {{ form.synopsis(class="form-control", rows="8",
+          placeholder="Long-form description shown on the product detail page.") }}
+          {% for e in form.synopsis.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2 class="admin-card-title">Cover Image</h2>
+
+        <div class="cover-upload">
+          <div class="cover-preview" id="coverPreview">
+            {% if book and book.cover_image %}
+            <img src="{{ book.cover_image | img }}" alt="Current cover">
+            {% else %}
+            <div class="cover-placeholder">
+              <i class="bi bi-image"></i>
+              <span>No cover uploaded</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="cover-upload-controls">
+            {{ form.cover_image(class="form-control", id="coverInput",
+            accept="image/png,image/jpeg,image/webp,image/gif") }}
+            <div class="form-help">
+              Recommended: 800×1200px (2:3 ratio). PNG, JPG, or WEBP. Max 5 MB.
+            </div>
+            {% for e in form.cover_image.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+            {% if book and book.cover_image %}
+            <div class="form-help form-help--muted">
+              Uploading a new image will replace the current cover.
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <aside class="admin-form-side">
+
+      <div class="admin-card admin-card--sticky">
+        <h2 class="admin-card-title">Publish</h2>
+        <div class="admin-publish-actions">
+          <button class="btn btn-primary w-100" type="submit">Add
+          </button>
+          <a href="#" class="btn btn-outline w-100">Cancel</a>
+        </div>
+        {% if book %}
+        <div class="admin-meta">
+          <div><span>Created</span><strong>{{ book.created_at.strftime('%d %b %Y') }}</strong></div>
+          <div><span>Slug</span><strong><code>{{ book.slug }}</code></strong></div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="admin-card">
+        <h2 class="admin-card-title">Pricing &amp; Stock</h2>
+
+        <div class="form-group">
+          {{ form.price.label(class="form-label") }}
+          {{ form.price(class="form-control", placeholder="0.00", step="0.01", min="0") }}
+          {% for e in form.price.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.stock.label(class="form-label") }}
+          {{ form.stock(class="form-control", placeholder="0", min="0") }}
+          {% for e in form.stock.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2 class="admin-card-title">Publication Details</h2>
+
+        <div class="form-group">
+          {{ form.isbn.label(class="form-label") }}
+          {{ form.isbn(class="form-control", placeholder="978-…") }}
+          {% for e in form.isbn.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.publisher.label(class="form-label") }}
+          {{ form.publisher(class="form-control") }}
+          {% for e in form.publisher.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            {{ form.publication_year.label(class="form-label") }}
+            {{ form.publication_year(class="form-control", placeholder="2024", min="1900", max="2100") }}
+            {% for e in form.publication_year.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="form-group">
+            {{ form.pages.label(class="form-label") }}
+            {{ form.pages(class="form-control", placeholder="320", min="1") }}
+            {% for e in form.pages.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h2 class="admin-card-title">Visibility</h2>
+        <label class="admin-toggle">
+          {{ form.is_featured(class="admin-toggle-input") }}
+          <span class="admin-toggle-box"></span>
+          <span class="admin-toggle-label">
+            <strong>Feature on homepage</strong>
+            <small>Shows this book in the "Featured" section of the landing page.</small>
+          </span>
+        </label>
+      </div>
+
+    </aside>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    'use strict';
+
+    /* ---------- Slug auto-generation from title ---------- */
+    const titleInput = document.getElementById('bookTitle');
+    const slugInput = document.getElementById('bookSlug');
+    const regenBtn = document.getElementById('slugRegen');
+    const slugPreview = document.getElementById('slugPreview');
+
+    const slugify = (s) =>
+      (s || '')
+        .toString()
+        .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/[-\s]+/g, '-');
+
+    let userTouchedSlug = false;
+    if (slugInput) {
+      // Mark as touched if the field already has a value (edit mode)
+      if (slugInput.value.trim()) userTouchedSlug = true;
+
+      slugInput.addEventListener('input', () => {
+        userTouchedSlug = true;
+        if (slugPreview) slugPreview.textContent = slugInput.value || 'your-book';
+      });
+    }
+
+    if (titleInput && slugInput) {
+      titleInput.addEventListener('input', () => {
+        if (!userTouchedSlug) {
+          slugInput.value = slugify(titleInput.value);
+          if (slugPreview) slugPreview.textContent = slugInput.value || 'your-book';
+        }
+      });
+    }
+
+    if (regenBtn && titleInput && slugInput) {
+      regenBtn.addEventListener('click', () => {
+        userTouchedSlug = true;
+        slugInput.value = slugify(titleInput.value);
+        if (slugPreview) slugPreview.textContent = slugInput.value || 'your-book';
+        slugInput.focus();
+      });
+    }
+
+    /* ---------- Description character counter ---------- */
+    const descInput = document.querySelector('textarea[name="description"]');
+    const descCount = document.getElementById('descCount');
+    if (descInput && descCount) {
+      const update = () => { descCount.textContent = descInput.value.length; };
+      descInput.addEventListener('input', update);
+      update();
+    }
+
+    /* ---------- Cover image preview ---------- */
+    const coverInput = document.getElementById('coverInput');
+    const coverPreview = document.getElementById('coverPreview');
+    if (coverInput && coverPreview) {
+      coverInput.addEventListener('change', () => {
+        const file = coverInput.files && coverInput.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          coverPreview.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  })();
+</script>
+{% endblock %}

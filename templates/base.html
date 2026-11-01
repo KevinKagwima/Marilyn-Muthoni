@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {# ---- Profile fallback variables ---- #}
+  {% set p_full_name = (profile.full_name if profile and profile.full_name else 'Marilyn Kamuru') %}
+  {% set p_prof_title = (profile.professional_title if profile and profile.professional_title else 'Entrepreneur ·
+  Lawyer · Political Strategist · Writer') %}
+  {% set p_tagline = (profile.tagline if profile and profile.tagline else 'A feminist lens on law, business, and power
+  in Kenya.') %}
+  {% set p_short_bio = (profile.short_bio if profile and profile.short_bio else 'Entrepreneur, lawyer, political
+  strategist, and writer.') %}
+  {% set p_email = (profile.email if profile and profile.email else 'kamurumm@gmail.com') %}
+  {% set p_phone = (profile.phone if profile and profile.phone else '+254 783 488 940') %}
+  {% set p_location = (profile.location if profile and profile.location else 'Nairobi, Kenya') %}
+  {% set p_twitter = (profile.social_twitter if profile and profile.social_twitter else
+  'https://twitter.com/marilynkamuru') %}
+  {% set p_linkedin = (profile.social_linkedin if profile and profile.social_linkedin else
+  'https://linkedin.com/in/marilynkamuru') %}
+  {% set p_instagram = (profile.social_instagram if profile and profile.social_instagram else
+  'https://instagram.com/kamurumm') %}
+  {% set p_facebook = (profile.social_facebook if profile and profile.social_facebook else None) %}
+
+  <title>{% block title %}{{ p_full_name }} · {{ p_prof_title }}{% endblock %}</title>
+
+  <meta name="description" content="{% block meta_description %}{{ p_tagline }}{% endblock %}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+  <nav class="site-nav" id="siteNav">
+    <div class="container nav-inner">
+      <a href="{{ url_for('home.index') }}" class="brand">{{ p_full_name }}</a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#about" class="{{ 'active' if request.endpoint == 'main.home' }}">About</a></li>
+        <li><a href="{{ url_for('shop.catalogue') }}">Shop</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+
+      <a href="#contact" class="btn btn-primary btn-sm nav-cta">Invite Me to Speak</a>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+  </nav>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-stack">
+    {% for category, message in messages %}
+    <div class="flash-msg {{ category }}">
+      <span>{{ message }}</span>
+      <button type="button" class="flash-close" aria-label="Dismiss">&times;</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h3 class="footer-brand">{{ p_full_name }}</h3>
+          <p class="footer-tagline">{{ p_tagline }}</p>
+          <div class="footer-social">
+            <a href="#" aria-label="LinkedIn" target="_blank" rel="noopener">
+              <i class="bi bi-linkedin"></i>
+            </a>
+            <a href="#" aria-label="Twitter" target="_blank" rel="noopener">
+              <i class="bi bi-twitter-x"></i>
+            </a>
+            <a href="#" aria-label="Instagram" target="_blank" rel="noopener">
+              <i class="bi bi-instagram"></i>
+            </a>
+            <a href="#" aria-label="Facebook" target="_blank" rel="noopener">
+              <i class="bi bi-facebook"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Explore</h4>
+          <ul class="footer-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#speaking">Speaking</a></li>
+            <li><a href="#consulting">Consulting</a></li>
+            <li><a href="#writings">Writings</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Shop</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('shop.catalogue') }}">All Products</a></li>
+            <li><a href="{{ url_for('shop.catalogue') }}">Books</a></li>
+            <li><a href="{{ url_for('shop.catalogue') }}">Clothing</a></li>
+            <li><a href="#">Cart</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">Get in touch</h4>
+          <p class="footer-contact"><i class="bi bi-envelope"></i> {{ p_email }}</p>
+          <p class="footer-contact"><i class="bi bi-telephone"></i> {{ p_phone }}</p>
+          <p class="footer-contact"><i class="bi bi-geo-alt"></i> {{ p_location }}</p>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <span>© {{ now.year if now else 2026 }} {{ p_full_name }}. All rights reserved.</span>
+        <a href="{{ url_for('home.index') }}">Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

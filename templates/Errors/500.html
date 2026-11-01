@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+Something Went Wrong · {{ p_full_name }}
+{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top: 180px; text-align: center;">
+  <div class="container">
+    <span class="eyebrow">500</span>
+    <h1 class="section-title">Something went wrong</h1>
+    <p style="color: var(--muted); max-width: 480px; margin: 0 auto 2rem;">
+      We're aware of the issue. Please try again in a moment, or head back home.
+    </p>
+    <a href="{{ url_for('home.index') }}" class="btn btn-primary">Back to Home</a>
+  </div>
+</section>
+{% endblock %}

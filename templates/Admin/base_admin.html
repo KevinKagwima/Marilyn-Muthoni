@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Admin{% endblock %} · {{ profile.full_name if profile else 'Admin' }}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="admin-body">
+
+  <div class="admin-shell">
+
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <a href="#">
+          <span class="brand-dot"></span>
+          Kamuru Admin
+        </a>
+      </div>
+
+      <nav class="admin-nav">
+        <div class="admin-nav-group">
+          <span class="admin-nav-label">Overview</span>
+          <a href="#" class="{% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </div>
+
+        <div class="admin-nav-group">
+          <span class="admin-nav-label">Catalogue</span>
+          <a href="#" class="{% if request.endpoint and request.endpoint.startswith('admin.book') %}active{% endif %}">
+            <i class="bi bi-book"></i> Books
+          </a>
+          <a href="#" class="stub">
+            <i class="bi bi-bag"></i> Products
+            <span class="nav-tag">soon</span>
+          </a>
+          <a href="#" class="stub">
+            <i class="bi bi-receipt"></i> Orders
+            <span class="nav-tag">soon</span>
+          </a>
+        </div>
+
+        <div class="admin-nav-group">
+          <span class="admin-nav-label">Content</span>
+          <a href="#" class="stub"><i class="bi bi-person"></i> Profile</a>
+        </div>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="{{ url_for('home.index') }}" target="_blank" rel="noopener">
+          <i class="bi bi-box-arrow-up-right"></i> View site
+        </a>
+        <a href="#" class="logout">
+          <i class="bi bi-box-arrow-right"></i> Log out
+        </a>
+      </div>
+    </aside>
+
+    <div class="admin-main">
+
+      <header class="admin-topbar">
+        <div class="admin-topbar-left">
+          <button type="button" class="admin-sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+            <i class="bi bi-list"></i>
+          </button>
+          {% block breadcrumbs %}{% endblock %}
+        </div>
+        <div class="admin-topbar-right">
+          <span class="admin-user">
+            <i class="bi bi-person-circle"></i>
+            {{ current_user.name if current_user.is_authenticated else 'Admin' }}
+          </span>
+        </div>
+      </header>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="admin-flash-stack">
+        {% for category, message in messages %}
+        <div class="admin-flash {{ category }}">
+          <span>{{ message }}</span>
+          <button type="button" class="flash-close" aria-label="Dismiss">&times;</button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      <main class="admin-content">
+        {% block content %}{% endblock %}
+      </main>
+
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

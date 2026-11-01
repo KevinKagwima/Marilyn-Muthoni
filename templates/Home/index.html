@@ -1,0 +1,531 @@
+{% extends "base.html" %}
+
+{% block title %}
+Marilyn Muthoni Kamuru
+{% endblock %}
+
+{% block body_class %}
+Home
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div class="hero-copy reveal">
+      <span class="eyebrow">100 Most Influential People in Gender Policy · Apolitical, 2021</span>
+      <h1 class="hero-title">Marilyn Muthoni</h1>
+      <p class="hero-sub">ENTREPRENEUR | LAWYER | POLITICAL STRATEGIST | WRITER</p>
+
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-primary">Invite Me to Speak</a>
+        <a href="#writings" class="btn btn-outline">Register For Book Launch</a>
+      </div>
+
+      <!-- <div class="portrait-badge">
+        <div class="num">100</div>
+        <div class="label">Most Influential People in Gender Policy · Apolitical, 2021</div>
+      </div> -->
+
+      <div class="hero-social">
+        <span>Find me on</span>
+        <a href="{{ p_linkedin }}" aria-label="LinkedIn" target="_blank" rel="noopener">
+          <i class="bi bi-linkedin"></i>
+        </a>
+        <a href="{{ p_twitter }}" aria-label="Twitter" target="_blank" rel="noopener">
+          <i class="bi bi-twitter-x"></i>
+        </a>
+        <a href="{{ p_instagram }}" aria-label="Instagram" target="_blank" rel="noopener">
+          <i class="bi bi-instagram"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-portrait reveal">
+      <div class="portrait-frame">
+        <span class="book-badge upcoming">BOOK LAUNCH · TUE 17, 2026</span>
+        <img src="{{ url_for('static', filename='images/UC by MMK Cover-Front.webp') }}" alt="{{ p_full_name }}">
+      </div>
+      <div class="portrait-decor"></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="featured-in">
+  <div class="container">
+    <p class="featured-in-label">Writing featured in</p>
+    <div class="featured-in-grid reveal">
+      <span>Foreign Policy</span>
+      <span>Al Jazeera</span>
+      <span>Daily Nation</span>
+      <span>The Standard</span>
+      <span>Business Daily Africa</span>
+      <span>The Elephant</span>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="about">
+  <div class="container about-grid">
+    <div class="about-image reveal">
+      <img loading="lazy" src="{{ url_for('static', filename='images/profile-picture.webp') }}" alt="{{ p_full_name }}">
+    </div>
+    <div class="reveal">
+      <span class="eyebrow">A little about me</span>
+      <h2 class="section-title">
+        {% if profile and profile.biography %}
+        Interrogating power. Reimagining what's possible.
+        {% else %}
+        Interrogating power. Reimagining what's possible.
+        {% endif %}
+      </h2>
+      <p class="lead-text">
+        Trained as a corporate finance lawyer, I founded one of Kenya's first
+        commercial records and information management companies — grew it to
+        profitability, and sold it to an international corporation in 2018.
+      </p>
+      <p style="color: var(--muted);">
+        Today I work at the intersection of law, business, and politics — as a
+        consultant on strategy, gender, and policy, as a writer on the
+        constitutional and political questions that shape women's lives, and as
+        an advocate whose organizing spans #WeAre52pc to #EndFemicide.
+      </p>
+
+      <div class="credentials">
+        <div class="cred-row">
+          <i class="bi bi-mortarboard"></i>
+          <div><strong>J.D. &amp; LL.M., International and Comparative Law</strong><span> — Cornell Law School</span>
+          </div>
+        </div>
+        <div class="cred-row">
+          <i class="bi bi-mortarboard"></i>
+          <div><strong>B.A., Political Science</strong><span> — Northeastern University</span></div>
+        </div>
+        <div class="cred-row">
+          <i class="bi bi-award"></i>
+          <div><strong>Vital Voices GROW Fellow</strong><span> — 2013–14</span></div>
+        </div>
+      </div>
+
+      <a href="#" class="link-arrow" style="margin-top: 2rem;">
+        Read my full story <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<section class="section section-cream">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow center">Areas of expertise</span>
+      <h2 class="section-title">Where I do my sharpest work</h2>
+    </div>
+
+    <div class="expertise-grid">
+      {% if expertise %}
+      {% for e in expertise %}
+      <div class="expertise-card reveal">
+        <div class="expertise-icon"><i class="bi {{ e.icon or 'bi-star' }}"></i></div>
+        <h3>{{ e.title }}</h3>
+        <p>{{ e.description or '' }}</p>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="expertise-card reveal">
+        <div class="expertise-icon"><i class="bi bi-bank"></i></div>
+        <h3>Constitutional &amp; Gender Law</h3>
+        <p>Two decades interrogating how Kenya's Constitution shapes — and fails to shape — women's lives.</p>
+      </div>
+      <div class="expertise-card reveal">
+        <div class="expertise-icon"><i class="bi bi-briefcase-fill"></i></div>
+        <h3>Entrepreneurship</h3>
+        <p>Founded and scaled one of Kenya's first commercial records management companies, exited 2018.</p>
+      </div>
+      <div class="expertise-card reveal">
+        <div class="expertise-icon"><i class="bi bi-diagram-3"></i></div>
+        <h3>Political Strategy</h3>
+        <p>Consultant on strategy, gender, and politics — for institutions, campaigns, and reform coalitions.</p>
+      </div>
+      <div class="expertise-card reveal">
+        <div class="expertise-icon"><i class="bi bi-pen-fill"></i></div>
+        <h3>Writing &amp; Commentary</h3>
+        <p>Essays, chapters, and forthcoming books on femicide, gender quotas, and the politics of the possible.</p>
+      </div>
+      <div class="expertise-card reveal">
+        <div class="expertise-icon"><i class="bi bi-megaphone-fill"></i></div>
+        <h3>Advocacy &amp; Organizing</h3>
+        <p>From #WeAre52pc to #EndFemicide — building campaigns that translate into durable legal change.</p>
+      </div>
+      <div class="expertise-card reveal">
+        <div class="expertise-icon"><i class="bi bi-mic-fill"></i></div>
+        <h3>Public Speaking</h3>
+        <p>Keynotes and panels on feminist legal theory, gender and power, and the future of Kenyan democracy.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container ach-grid">
+    <div class="reveal">
+      <span class="eyebrow">Milestones</span>
+      <h2 class="section-title">A record of precedent and progress</h2>
+      <p style="color: var(--muted); max-width: 380px;">
+        Milestones from two decades of work at the intersection of law,
+        business, and politics.
+      </p>
+    </div>
+
+    <div class="ach-list">
+      {% if achievements %}
+      {% for a in achievements %}
+      <div class="ach-item reveal">
+        <div class="ach-year">{{ a.year or '' }}</div>
+        <div>
+          <h4>{{ a.title }}</h4>
+          {% if a.description %}<p>{{ a.description }}</p>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="ach-item reveal">
+        <div class="ach-year">2021</div>
+        <div>
+          <h4>Named among the 100 Most Influential People in Gender Policy</h4>
+          <p>Recognized worldwide by Apolitical for impact on gender policy.</p>
+        </div>
+      </div>
+      <div class="ach-item reveal">
+        <div class="ach-year">2018</div>
+        <div>
+          <h4>Sold commercial records company to international corporation</h4>
+          <p>Founded, scaled, and exited one of Kenya's first commercial records and information management firms.</p>
+        </div>
+      </div>
+      <div class="ach-item reveal">
+        <div class="ach-year">2017</div>
+        <div>
+          <h4>Founding member, #WeAre52pc</h4>
+          <p>First collective to petition the Chief Justice of Kenya for dissolution of Parliament over failure to enact
+            gender quota legislation.</p>
+        </div>
+      </div>
+      <div class="ach-item reveal">
+        <div class="ach-year">2016</div>
+        <div>
+          <h4>Lead petitioner, landmark High Court case</h4>
+          <p>Court declared the Kenyan Cabinet unconstitutional for violating the not-more-than-two-thirds gender
+            principle.</p>
+        </div>
+      </div>
+      <div class="ach-item reveal">
+        <div class="ach-year">2013</div>
+        <div>
+          <h4>Vital Voices GROW Fellow</h4>
+          <p>Selected for the 2013–14 cohort of the Vital Voices Global Leadership program.</p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+<section class="section section-cream" id="writings">
+  <div class="container">
+    <div class="section-head-split reveal">
+      <div>
+        <span class="eyebrow">Selected writings</span>
+        <h2 class="section-title" style="margin-bottom: 0;">Books</h2>
+      </div>
+      <a href="{{ url_for('shop.catalogue') }}" class="link-arrow">All publications <i
+          class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="book-grid">
+      <a href="#" class="book-card reveal">
+        <div class="book-cover"
+          style="background-image: url(../../static/images/200w_w_are.webp); background-size: cover;">
+          <!-- <div class="book-cover-text">
+            The<br>Missing<br>Piece
+            <div class="book-cover-sub">Gender Parity · 2018</div>
+          </div> -->
+        </div>
+        <div class="book-info">
+          <h4>The Missing Piece</h4>
+          <div class="meta">The Legislature, Gender Parity &amp; Constitutional Legitimacy in Kenya<br>Chapter in
+            <em>Where Women Are</em> (2018)
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="book-card reveal">
+        <div class="book-cover"
+          style="background-image: url(../../static/images/Analysis\ output\ 1.webp); background-size: cover;">
+          <!-- <div class="book-cover-text">
+            The<br>Menopause<br>When We<br>Are Free
+            <div class="book-cover-sub">Essay · 2023</div>
+          </div> -->
+        </div>
+        <div class="book-info">
+          <h4>The Menopause When We Are Free</h4>
+          <div class="meta">Essay in <em>Bloody Hell! Adventures in Menopause From Around the World</em>, ed. Mona
+            Eltahawy (2023)</div>
+        </div>
+      </a>
+
+      <a href="#" class="book-card reveal">
+        <div class="book-cover"
+          style="background-image: url(../../static/images/UC\ by\ MMK\ Cover-Front.webp); background-size: cover;">
+          <span class="book-badge soon">Forthcoming · 2026</span>
+          <!-- <div class="book-cover-text">
+            Unconstitutional
+            <div class="book-cover-sub">How the Supreme Court<br>Sabotaged the Constitution</div>
+          </div> -->
+        </div>
+        <div class="book-info">
+          <h4>Unconstitutional</h4>
+          <div class="meta">How the Supreme Court Sabotaged Implementation of the Constitution of Kenya 2010 ·
+            <em>Forthcoming 2026</em>
+          </div>
+        </div>
+      </a>
+
+      <a href="#" class="book-card reveal">
+        <div class="book-cover" style="background: linear-gradient(150deg, #C99B3F 0%, #7A5C3A 100%);">
+          <span class="book-badge soon">Forthcoming · 2027</span>
+          <div class="book-cover-text">
+            African<br>Feminist
+            <div class="book-cover-sub">Bloomsbury Academic</div>
+          </div>
+        </div>
+        <div class="book-info">
+          <h4>African Feminist</h4>
+          <div class="meta">Reflections on Gender Quotas in Kenya — Progress and Backlash · Bloomsbury Academic,
+            <em>Forthcoming 2027</em>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<section class="section section-dark" id="speaking">
+  <div class="container speak-grid">
+    <div class="reveal">
+      <span class="eyebrow eyebrow-light">Speaking</span>
+      <h2 class="section-title">A feminist lens, in the room</h2>
+      <p>
+        Keynotes, panels, and workshops on law, gender, and power — for
+        conferences, universities, boardrooms, and civic gatherings that want
+        to think harder about the world we're building.
+      </p>
+      <a href="#contact" class="btn btn-accent">Invite Me to Speak</a>
+    </div>
+
+    <div class="speak-topics">
+      {% if speaking_topics %}
+      {% for t in speaking_topics %}
+      <div class="topic-pill reveal">
+        <i class="bi {{ t.icon or 'bi-mic-fill' }}"></i>
+        <span>{{ t.title }}</span>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="topic-pill reveal"><i class="bi bi-bank2"></i><span>Feminist Legal Theory</span></div>
+      <div class="topic-pill reveal"><i class="bi bi-people-fill"></i><span>Gender &amp; Politics in Kenya</span></div>
+      <div class="topic-pill reveal"><i class="bi bi-file-earmark-text"></i><span>Constitutional Law</span></div>
+      <div class="topic-pill reveal"><i class="bi bi-briefcase"></i><span>Women in Business</span></div>
+      <div class="topic-pill reveal"><i class="bi bi-heart-pulse"></i><span>Femicide &amp; Gender-Based Violence</span>
+      </div>
+      <div class="topic-pill reveal"><i class="bi bi-diagram-3"></i><span>Political Strategy</span></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="consulting">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow center">Consulting</span>
+      <h2 class="section-title">Strategy with a feminist lens</h2>
+      <p style="color: var(--muted); max-width: 620px; margin: 1rem auto 0;">
+        Marilyn has consulted for the Cabinet Secretary of Devolution and
+        Planning on Gender and Access to Government Procurement Opportunities,
+        the Kenya Judiciary, and the Chief Justice of Kenya.
+      </p>
+    </div>
+
+    <div class="consulting-grid">
+      {% if consulting_services %}
+      {% for s in consulting_services %}
+      <div class="consulting-card reveal">
+        <div class="consulting-icon"><i class="bi {{ s.icon or 'bi-briefcase' }}"></i></div>
+        <h4>{{ s.title }}</h4>
+        <p>{{ s.description or '' }}</p>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="consulting-card reveal">
+        <div class="consulting-icon"><i class="bi bi-people"></i></div>
+        <h4>Gender &amp; Policy Strategy</h4>
+        <p>Designing and implementing gender-responsive policy in government, institutions, and enterprises.</p>
+      </div>
+      <div class="consulting-card reveal">
+        <div class="consulting-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <h4>Political Strategy</h4>
+        <p>Strategic counsel for campaigns, coalitions, and reform initiatives navigating Kenya's political terrain.</p>
+      </div>
+      <div class="consulting-card reveal">
+        <div class="consulting-icon"><i class="bi bi-bank"></i></div>
+        <h4>Legal &amp; Constitutional Analysis</h4>
+        <p>Constitutional and comparative legal analysis for organizations working on rights and governance.</p>
+      </div>
+      <div class="consulting-card reveal">
+        <div class="consulting-icon"><i class="bi bi-briefcase"></i></div>
+        <h4>Women-Owned Enterprise</h4>
+        <p>Advisory on Access to Government Procurement Opportunities (AGPO) and business strategy for women-led firms.
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+<section class="section section-cream">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="eyebrow center">Testimonials</span>
+      <h2 class="section-title">What collaborators say</h2>
+      <p style="color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem;">
+        <em>Placeholder quotes — to be replaced with real testimonials before launch.</em>
+      </p>
+    </div>
+
+    <div class="testi-grid">
+      {% if testimonials %}
+      {% for t in testimonials %}
+      <div class="testi-card reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-content">{{ t.content }}</p>
+        <div class="testi-author">
+          {{ t.author }}
+          {% if t.role %}<span>{{ t.role }}</span>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="testi-card reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-content">
+          Marilyn brings a rare combination of legal precision, political
+          instinct, and moral clarity to every conversation. Rooms change after
+          she speaks in them.
+        </p>
+        <div class="testi-author">[Placeholder Name]<span>[Role · Organization]</span></div>
+      </div>
+      <div class="testi-card reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-content">
+          Her work on gender parity in Kenya has moved the needle in ways that
+          few voices have. It's an honour to work alongside her.
+        </p>
+        <div class="testi-author">[Placeholder Name]<span>[Role · Organization]</span></div>
+      </div>
+      <div class="testi-card reveal">
+        <span class="testi-quote">"</span>
+        <p class="testi-content">
+          Marilyn is one of the clearest thinkers I know on the relationship
+          between law and lived experience. Her writing should be required
+          reading.
+        </p>
+        <div class="testi-author">[Placeholder Name]<span>[Role · Organization]</span></div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="shop">
+  <div class="container">
+    <div class="section-head-split reveal">
+      <div>
+        <span class="eyebrow">Shop</span>
+        <h2 class="section-title" style="margin-bottom: 0;">Branded merchandise</h2>
+      </div>
+      <a href="{{ url_for('shop.catalogue') }}" class="link-arrow">Shop all <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="merch-grid">
+      {% if featured_merch %}
+      {% for m in featured_merch %}
+      <a href="#" class="merch-card reveal">
+        <div class="merch-img">
+          {% if m.image %}
+          <img src="{{ m.image | img }}" alt="{{ m.name }}">
+          {% else %}
+          <img
+            src="{{ url_for('static', filename='images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp') }}"
+            alt="{{ m.name }}">
+          {% endif %}
+        </div>
+        <div class="merch-info">
+          <h4>{{ m.name }}</h4>
+          <span class="price">Ksh 1,000</span>
+        </div>
+      </a>
+      {% endfor %}
+      {% else %}
+      <a href="#" class="merch-card reveal">
+        <div class="merch-img"><img loading="lazy"
+            src="{{ url_for('static', filename='images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp') }}"
+            alt="Signature Tote"></div>
+        <div class="merch-info">
+          <h4>Signature Tote</h4><span class="price">KSh 1,600</span>
+        </div>
+      </a>
+      <a href="#" class="merch-card reveal">
+        <div class="merch-img"><img loading="lazy"
+            src="{{ url_for('static', filename='images/back-view-mockup-of-a-woman-wearing-a-bella-canvas-t-shirt-m39788.webp') }}"
+            alt="Writer Shirt"></div>
+        <div class="merch-info">
+          <h4>Writer Shirt</h4><span class="price">KSh 4,200</span>
+        </div>
+      </a>
+      <a href="#" class="merch-card reveal">
+        <div class="merch-img"><img loading="lazy"
+            src="{{ url_for('static', filename='images/Unconstitutional Hardcover Book - Version.webp') }}"
+            alt="Notebook Set">
+        </div>
+        <div class="merch-info">
+          <h4>Notebook Set</h4><span class="price">KSh 900</span>
+        </div>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+
+<section class="cta-banner" id="contact">
+  <div class="container">
+    <h2>Let's work together</h2>
+    <p>Whether you're planning a keynote, building gender-responsive policy, or rethinking strategy — I'd love to hear
+      what you're working on.</p>
+    <a href="mailto:{{ p_email }}" class="btn btn-light">Get in Touch</a>
+  </div>
+</section>
+
+{% endblock %}
