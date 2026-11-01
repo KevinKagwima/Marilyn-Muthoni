@@ -45,29 +45,33 @@ Shop
       </div>
     </div>
 
-    <div class="products-section" id="books-section" {% if active_category !='books' %}hidden{% endif %}>
+    <div class="products-section" id="books-section" {% if active_category !='books' %}{% endif %}>
       {% if books %}
       <div class="product-grid books">
         {% for p in books %}
         <article class="product-card">
-          <a href="#" class="product-media {{ p.cover_class }}" aria-label="View {{ p.name }}">
-            {% if p.badge %}
+          <a href="#" class="product-media {{ p.cover_class }}" aria-label="View {{ p.title }}">
             <span class="product-badge {% if p.forthcoming %}soon{% endif %}">
-              {{ p.badge }}{% if p.badge_year %} {{ p.badge_year }}{% endif %}
+              {% if p.publication_year %}
+              {{ p.publication_year }}
+              {% endif %}
             </span>
-            {% endif %}
             <div class="cover-text">
-              {{ p.cover_text }}
-              {% if p.cover_sub %}<div class="cover-sub">{{ p.cover_sub }}</div>{% endif %}
+              {{ p.subtitle }}
+              {% if p.cover_sub %}
+              <div class="cover-sub">
+                {{ p.cover_sub }}
+              </div>
+              {% endif %}
             </div>
           </a>
 
           <div class="product-body">
-            <div class="product-cat">{{ p.category_label }}</div>
+            <div class="product-cat">{{ p.subtitle }}</div>
             <h3 class="product-title">
-              <a href="#">{{ p.name }}</a>
+              <a href="#">{{ p.title }}</a>
             </h3>
-            <p class="product-desc">{{ p.description }}</p>
+            <p class="product-desc">{{ p.synopsis|truncate(40) }}</p>
 
             <div class="product-footer">
               <span class="product-price">{{ p.price }}</span>
@@ -77,7 +81,7 @@ Shop
                 Coming {{ p.badge_year or 'Soon' }}
               </button>
               {% else %}
-              <form method="POST" action="/cart/add" class="add-form" data-product-name="{{ p.name }}">
+              <form method="POST" action="#" class="add-form" data-product-name="{{ p.slug }}">
                 <input type="hidden" name="product_id" value="{{ p.id }}">
                 <input type="hidden" name="quantity" value="1">
                 <button class="product-add" type="submit">Add to Cart</button>

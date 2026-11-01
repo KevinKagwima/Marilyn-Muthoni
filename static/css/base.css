@@ -475,16 +475,19 @@ h5 {
   align-items: flex-start;
   gap: 1rem;
 }
-.flash-msg.success {
+.admin-flash.success {
   border-left-color: #2f7a4d;
+  background: #9fdfb9;
 }
-.flash-msg.danger {
+.admin-flash.danger {
   border-left-color: #b4342b;
+  background: #f6a5a0;
 }
-.flash-msg.warning {
+.admin-flash.warning {
   border-left-color: #c99b3f;
+  background: #eacf9b;
 }
-.flash-msg.info {
+.admin-flash.info {
   border-left-color: var(--primary);
 }
 .flash-close {

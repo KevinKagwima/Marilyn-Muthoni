@@ -6,7 +6,7 @@
 <nav class="admin-breadcrumbs" aria-label="Breadcrumb">
   <a href="#">Dashboard</a>
   <i class="bi bi-chevron-right"></i>
-  <a href="#">Books</a>
+  <a href="{{ url_for('admin.index') }}">Books</a>
   <i class="bi bi-chevron-right"></i>
   <span>{{ 'Edit' if book else 'New' }}</span>
 </nav>
@@ -61,7 +61,7 @@
         <div class="cover-upload">
           <div class="cover-preview" id="coverPreview">
             {% if book and book.cover_image %}
-            <img src="{{ book.cover_image | img }}" alt="Current cover">
+            <img src="{{ book.cover_image }}" alt="Current cover">
             {% else %}
             <div class="cover-placeholder">
               <i class="bi bi-image"></i>

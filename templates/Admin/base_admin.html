@@ -40,7 +40,8 @@
 
         <div class="admin-nav-group">
           <span class="admin-nav-label">Catalogue</span>
-          <a href="#" class="{% if request.endpoint and request.endpoint.startswith('admin.book') %}active{% endif %}">
+          <a href="{{ url_for('admin.index') }}"
+            class="{% if request.endpoint and request.endpoint.startswith('admin.book') %}active{% endif %}">
             <i class="bi bi-book"></i> Books
           </a>
           <a href="#" class="stub">

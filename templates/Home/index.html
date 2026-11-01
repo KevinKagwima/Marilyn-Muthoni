@@ -17,12 +17,12 @@ Home
   <div class="container hero-grid">
     <div class="hero-copy reveal">
       <span class="eyebrow">100 Most Influential People in Gender Policy · Apolitical, 2021</span>
-      <h1 class="hero-title">Marilyn Muthoni</h1>
-      <p class="hero-sub">ENTREPRENEUR | LAWYER | POLITICAL STRATEGIST | WRITER</p>
+      <h1 class="hero-title">Marilyn Kamuru</h1>
+      <p class="hero-sub">FEMINIST LAWYER | POLITICAL STRATEGIST | WRITER | ENTREPRENEUR</p>
 
       <div class="hero-cta">
         <a href="#contact" class="btn btn-primary">Invite Me to Speak</a>
-        <a href="#writings" class="btn btn-outline">Register For Book Launch</a>
+        <a href="{{ url_for('home.book_landing') }}" class="btn btn-outline">Discover The Book</a>
       </div>
 
       <!-- <div class="portrait-badge">
@@ -54,7 +54,6 @@ Home
   </div>
 </section>
 
-
 <section class="featured-in">
   <div class="container">
     <p class="featured-in-label">Writing featured in</p>
@@ -68,7 +67,6 @@ Home
     </div>
   </div>
 </section>
-
 
 <section class="section" id="about">
   <div class="container about-grid">
@@ -118,7 +116,6 @@ Home
     </div>
   </div>
 </section>
-
 
 <section class="section section-cream">
   <div class="container">
@@ -171,7 +168,6 @@ Home
     </div>
   </div>
 </section>
-
 
 <section class="section">
   <div class="container ach-grid">
@@ -238,7 +234,6 @@ Home
   </div>
 </section>
 
-
 <section class="section section-cream" id="writings">
   <div class="container">
     <div class="section-head-split reveal">
@@ -254,10 +249,6 @@ Home
       <a href="#" class="book-card reveal">
         <div class="book-cover"
           style="background-image: url(../../static/images/200w_w_are.webp); background-size: cover;">
-          <!-- <div class="book-cover-text">
-            The<br>Missing<br>Piece
-            <div class="book-cover-sub">Gender Parity · 2018</div>
-          </div> -->
         </div>
         <div class="book-info">
           <h4>The Missing Piece</h4>
@@ -270,10 +261,6 @@ Home
       <a href="#" class="book-card reveal">
         <div class="book-cover"
           style="background-image: url(../../static/images/Analysis\ output\ 1.webp); background-size: cover;">
-          <!-- <div class="book-cover-text">
-            The<br>Menopause<br>When We<br>Are Free
-            <div class="book-cover-sub">Essay · 2023</div>
-          </div> -->
         </div>
         <div class="book-info">
           <h4>The Menopause When We Are Free</h4>
@@ -286,10 +273,7 @@ Home
         <div class="book-cover"
           style="background-image: url(../../static/images/UC\ by\ MMK\ Cover-Front.webp); background-size: cover;">
           <span class="book-badge soon">Forthcoming · 2026</span>
-          <!-- <div class="book-cover-text">
-            Unconstitutional
-            <div class="book-cover-sub">How the Supreme Court<br>Sabotaged the Constitution</div>
-          </div> -->
+
         </div>
         <div class="book-info">
           <h4>Unconstitutional</h4>
@@ -317,7 +301,6 @@ Home
     </div>
   </div>
 </section>
-
 
 <section class="section section-dark" id="speaking">
   <div class="container speak-grid">
@@ -352,7 +335,6 @@ Home
     </div>
   </div>
 </section>
-
 
 <section class="section" id="consulting">
   <div class="container">
@@ -401,7 +383,6 @@ Home
     </div>
   </div>
 </section>
-
 
 <section class="section section-cream">
   <div class="container">
@@ -457,8 +438,7 @@ Home
   </div>
 </section>
 
-
-<section class="section" id="shop">
+<!-- <section class="section" id="shop">
   <div class="container">
     <div class="section-head-split reveal">
       <div>
@@ -516,13 +496,13 @@ Home
       {% endif %}
     </div>
   </div>
-</section>
-
+</section> -->
 
 <section class="cta-banner" id="contact">
   <div class="container">
     <h2>Let's work together</h2>
-    <p>Whether you're planning a keynote, building gender-responsive policy, or rethinking strategy — I'd love to hear
+    <p>Whether you're planning a keynote, building gender-responsive policy, or rethinking strategy. <br> I'd love to
+      hear
       what you're working on.</p>
     <a href="mailto:{{ p_email }}" class="btn btn-light">Get in Touch</a>
   </div>
