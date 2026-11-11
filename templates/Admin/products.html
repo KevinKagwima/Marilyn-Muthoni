@@ -1,0 +1,79 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}
+All Merchendise
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="admin-breadcrumbs" aria-label="Breadcrumb">
+  <a href="#">Dashboard</a>
+  <i class="bi bi-chevron-right"></i>
+  <span>Merchendise</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">Merchendise</h1>
+  </div>
+  <a href="{{ url_for('admin.add_product') }}" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg"></i> Add Merchendise
+  </a>
+</div>
+
+<form method="GET" class="admin-search-bar" role="search">
+  <div class="admin-search-input">
+    <i class="bi bi-search"></i>
+    <input type="text" name="q" value="{{ q }}" placeholder="Search by name" autocomplete="off">
+
+  </div>
+</form>
+
+{% if products %}
+<div class="books-grid">
+  {% for b in products %}
+  <article class="book-tile">
+
+    <div class="book-tile-cover">
+      <img src="../../static/images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp" alt="{{ b.title }}">
+
+      {# Status badges #}
+      {% if b.stock <= 0 %} <span class="book-tile-flag book-tile-flag--out">Out</span>
+        {% endif %}
+
+        <div class="book-tile-actions">
+          <a href="{{ url_for('admin.edit_product', product_slug=b.slug) }}" class="book-tile-action" title="Edit book"
+            aria-label="Edit {{ b.name }}">
+            <i class="bi bi-pencil"></i>
+          </a>
+
+          <a href="{{ url_for('admin.delete_book', book_slug=b.slug) }}"
+            class="book-tile-action book-tile-action--danger" title="Delete book" aria-label="Delete {{ b.title }}">
+            <i class="bi bi-trash"></i>
+          </a>
+
+        </div>
+    </div>
+
+    <div class="book-tile-info">
+      <h3 class="book-tile-title" title="{{ b.title }}">{{ b.name }}</h3>
+      <div class="book-tile-meta">
+        <span class="book-tile-price">{{ b.price }}</span>
+        <span class="book-tile-stock {% if b.stock <= 0 %}book-tile-stock--out{% endif %}">
+          {{ b.stock if b.stock > 0 else '—' }}
+        </span>
+      </div>
+    </div>
+
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="admin-empty">
+  <h3>No merchendise yet</h3>
+  <p>Add your first merchendise to start building the catalogue.</p>
+</div>
+{% endif %}
+
+{% endblock %}

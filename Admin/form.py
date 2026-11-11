@@ -16,3 +16,12 @@ class BookForm(FlaskForm):
   )
   stock = IntegerField("Stock Quantity", validators=[Optional(), NumberRange(min=0)], default=0)
   cover_image = FileField("Cover Image", description="PNG, JPG, or WEBP. Max 5MB.")
+
+class ProductForm(FlaskForm):
+  name = StringField("Name", validators=[DataRequired(), Length(max=200)], description="The merchendise's full name")
+  description = TextAreaField("Description",validators=[Optional(), Length(max=8000)], description="Long-form description. Shown on the product detail page")
+  short_description = TextAreaField("Short Description",validators=[Optional(), Length(max=1000)], description="Short-form description. Shown on the product detail page")
+  is_featured = BooleanField("Feature on homepage")
+  price = FloatField( "Price (KSh)", validators=[DataRequired(message="Price is required."), NumberRange(min=0)],
+  )
+  stock = IntegerField("Stock Quantity", validators=[Optional(), NumberRange(min=0)], default=0)

@@ -13,20 +13,9 @@ All Books
 {% endblock %}
 
 {% block content %}
-
 <div class="admin-page-head">
   <div>
     <h1 class="admin-page-title">Books</h1>
-    <p class="admin-page-sub">
-      {% if q %}
-      {{ books|length }} result{{ '' if books|length == 1 else 's' }} for “{{ q }}”
-      · <a href="{{ url_for('admin.index') }}" class="admin-inline-link">clear</a>
-      {% else %}
-      {{ total }} book{{ '' if total == 1 else 's' }} ·
-      {{ in_stock }} in stock ·
-      {{ featured }} featured
-      {% endif %}
-    </p>
   </div>
   <a href="{{ url_for('admin.add_book') }}" class="btn btn-primary btn-sm">
     <i class="bi bi-plus-lg"></i> Add Book
@@ -47,13 +36,7 @@ All Books
   <article class="book-tile">
 
     <div class="book-tile-cover">
-      {% if b.cover_image %}
-      <img src="{{ b.cover_image }}" alt="{{ b.title }}">
-      {% else %}
-      <div class="book-tile-placeholder">
-        <i class="bi bi-book"></i>
-      </div>
-      {% endif %}
+      <img src="../../static/images/UC by MMK Cover-Front.webp" alt="{{ b.title }}">
 
       {# Status badges #}
       {% if b.stock <= 0 %} <span class="book-tile-flag book-tile-flag--out">Out</span>

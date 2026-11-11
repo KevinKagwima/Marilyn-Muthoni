@@ -1,0 +1,157 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}
+{{ 'Edit' if product else 'New' }} Merchendise
+{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="admin-breadcrumbs" aria-label="Breadcrumb">
+  <a href="#">Dashboard</a>
+  <i class="bi bi-chevron-right"></i>
+  <a href="{{ url_for('admin.products') }}">Merchendise</a>
+  <i class="bi bi-chevron-right"></i>
+  <span>{{ 'Edit' if product else 'New' }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">{{ 'Edit Merchendise' if product else 'Add a New Merchendise' }}</h1>
+  </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="admin-form" novalidate>
+  {{ form.hidden_tag() }}
+
+  <div class="admin-form-grid">
+
+    <div class="admin-form-main">
+
+      <div class="admin-card">
+        <h2 class="admin-card-title">Content</h2>
+
+        <div class="form-group">
+          {{ form.name.label(class="form-label") }}
+          {{ form.name(class="form-control form-control-lg",
+          placeholder="e.g. Tote Bag",
+          id="merchName",
+          autocomplete="off") }}
+          {% for e in form.name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.description.label(class="form-label") }}
+          {{ form.description(class="form-control", rows="8",
+          placeholder="Long-form description shown on the product detail page.") }}
+          {% for e in form.description.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.short_description.label(class="form-label") }}
+          {{ form.short_description(class="form-control", rows="8",
+          placeholder="Short-form description shown on the product detail page.") }}
+          {% for e in form.short_description.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+    <aside class="admin-form-side">
+
+      <div class="admin-card admin-card--sticky">
+        <h2 class="admin-card-title">Publish</h2>
+        <div class="admin-publish-actions">
+          <button class="btn btn-primary w-100" type="submit">Add
+          </button>
+          <a href="#" class="btn btn-outline w-100">Cancel</a>
+        </div>
+        {% if product %}
+        <div class="admin-meta">
+          <div><span>Created</span><strong>{{ product.created_at.strftime('%d %b %Y') }}</strong></div>
+          <div><span>Slug</span><strong><code>{{ product.slug }}</code></strong></div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="admin-card">
+        <h2 class="admin-card-title">Pricing &amp; Stock</h2>
+
+        <div class="form-group">
+          {{ form.price.label(class="form-label") }}
+          {{ form.price(class="form-control", placeholder="0.00", step="0.01", min="0") }}
+          {% for e in form.price.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+
+        <div class="form-group">
+          {{ form.stock.label(class="form-label") }}
+          {{ form.stock(class="form-control", placeholder="0", min="0") }}
+          {% for e in form.stock.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    'use strict';
+
+    /* ---------- Slug auto-generation from title ---------- */
+    const titleInput = document.getElementById('bookTitle');
+    const slugInput = document.getElementById('bookSlug');
+    const regenBtn = document.getElementById('slugRegen');
+    const slugPreview = document.getElementById('slugPreview');
+
+    const slugify = (s) =>
+      (s || '')
+        .toString()
+        .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/[-\s]+/g, '-');
+
+    let userTouchedSlug = false;
+    if (slugInput) {
+      // Mark as touched if the field already has a value (edit mode)
+      if (slugInput.value.trim()) userTouchedSlug = true;
+
+      slugInput.addEventListener('input', () => {
+        userTouchedSlug = true;
+        if (slugPreview) slugPreview.textContent = slugInput.value || 'your-book';
+      });
+    }
+
+    if (titleInput && slugInput) {
+      titleInput.addEventListener('input', () => {
+        if (!userTouchedSlug) {
+          slugInput.value = slugify(titleInput.value);
+          if (slugPreview) slugPreview.textContent = slugInput.value || 'your-book';
+        }
+      });
+    }
+
+    if (regenBtn && titleInput && slugInput) {
+      regenBtn.addEventListener('click', () => {
+        userTouchedSlug = true;
+        slugInput.value = slugify(titleInput.value);
+        if (slugPreview) slugPreview.textContent = slugInput.value || 'your-book';
+        slugInput.focus();
+      });
+    }
+
+    /* ---------- Description character counter ---------- */
+    const descInput = document.querySelector('textarea[name="description"]');
+    const descCount = document.getElementById('descCount');
+    if (descInput && descCount) {
+      const update = () => { descCount.textContent = descInput.value.length; };
+      descInput.addEventListener('input', update);
+      update();
+    }
+  })();
+</script>
+{% endblock %}
