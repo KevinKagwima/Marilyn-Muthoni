@@ -104,6 +104,64 @@ def cart():
 
   return render_template("Shop/cart.html", **context)
 
+@shop.route("/add-quantity/<int:cart_item_id>")
+def add_quantity(cart_item_id):
+  try:
+    cart_item = CartItem.query.filter_by(unique_id=cart_item_id).first()
+
+    if not cart_item:
+      flash("Could not update quantity. Product not found", category="danger")
+      return redirect(url_for('shop.cart'))
+    
+    cart = Cart.query.filter_by(id=cart_item.cart_id).first()
+
+    item = Product.query.filter_by(id=cart_item.product_id).first() or Book.query.filter_by(id=cart_item.book_id).first()
+
+    if item:
+      if cart_item.quantity <= item.stock:
+        cart_item.quantity = cart_item.quantity + 1
+        cart_item.unit_price = item.price * cart_item.quantity
+        db.session.commit()
+        update_cart_total(cart.id)
+        flash("Cart updated successfully", category="success")
+
+    return redirect(url_for('shop.cart'))
+
+  except Exception as e:
+    flash(f"{repr(e)}")
+    return redirect(url_for('shop.cart'))
+
+@shop.route("/remove-quantity/<int:cart_item_id>")
+def remove_quantity(cart_item_id):
+  try:
+    cart_item = CartItem.query.filter_by(unique_id=cart_item_id).first()
+
+    if not cart_item:
+      flash("Could not update quantity. Product not found", category="danger")
+      return redirect(url_for('shop.cart'))
+
+    elif cart_item.quantity == 1 or cart_item.quantity < 1 :
+      flash("Product at lowest quantity", category="info")
+      return redirect(url_for('shop.cart'))
+    
+    cart = Cart.query.filter_by(id=cart_item.cart_id).first()
+
+    item = Product.query.filter_by(id=cart_item.product_id).first() or Book.query.filter_by(id=cart_item.book_id).first()
+
+    if item:
+      if cart_item.quantity <= item.stock:
+        cart_item.quantity = cart_item.quantity - 1
+        cart_item.unit_price = item.price * cart_item.quantity
+        db.session.commit()
+        update_cart_total(cart.id)
+        flash("Cart updated successfully", category="success")
+
+    return redirect(url_for('shop.cart'))
+
+  except Exception as e:
+    flash(f"{repr(e)}")
+    return redirect(url_for('shop.cart'))
+
 @shop.route("/clear-cart/<int:cart_id>", methods=["POST"])
 def clear_cart(cart_id):
   cart = Cart.query.filter_by(unique_id=cart_id).first()

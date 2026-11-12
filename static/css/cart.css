@@ -145,12 +145,12 @@
 .cart-item-qty {
   display: flex;
   align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 3px;
 }
 .qty-form {
   display: flex;
   align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 3px;
   overflow: hidden;
   background: var(--white);
 }
