@@ -50,21 +50,7 @@ Shop
       <div class="product-grid books">
         {% for p in books %}
         <article class="product-card">
-          <a href="#" class="product-media {{ p.cover_class }}" aria-label="View {{ p.title }}">
-            <span class="product-badge {% if p.forthcoming %}soon{% endif %}">
-              {% if p.publication_year %}
-              {{ p.publication_year }}
-              {% endif %}
-            </span>
-            <div class="cover-text">
-              {{ p.subtitle }}
-              {% if p.cover_sub %}
-              <div class="cover-sub">
-                {{ p.cover_sub }}
-              </div>
-              {% endif %}
-            </div>
-          </a>
+          <img loading="lazy" src="../../static/images/UC by MMK Cover-Front.webp" alt="{{ p.title }}">
 
           <div class="product-body">
             <div class="product-cat">{{ p.subtitle }}</div>
@@ -81,11 +67,12 @@ Shop
                 Coming {{ p.badge_year or 'Soon' }}
               </button>
               {% else %}
-              <form method="POST" action="#" class="add-form" data-product-name="{{ p.slug }}">
+              <a href="{{ url_for('shop.add_to_cart', item_slug=p.slug) }}" class="add-form"
+                data-product-name="{{ p.slug }}">
                 <input type="hidden" name="product_id" value="{{ p.id }}">
                 <input type="hidden" name="quantity" value="1">
                 <button class="product-add" type="submit">Add to Cart</button>
-              </form>
+              </a>
               {% endif %}
             </div>
           </div>
@@ -104,15 +91,16 @@ Shop
       <div class="product-grid merch">
         {% for p in merchandise %}
         <article class="product-card">
-          <a href="#" class="product-media {{ p.cover_class }}" aria-label="View {{ p.name }}">
-            {% if p.badge %}
-            <span class="product-badge">{{ p.badge }}</span>
-            {% endif %}
-            <div class="cover-text">
-              {{ p.cover_text }}
-              {% if p.cover_sub %}<div class="cover-sub">{{ p.cover_sub }}</div>{% endif %}
-            </div>
-          </a>
+          {% if p.name == "Tote Bag" %}
+          <img loading="lazy" src="../../static/images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp"
+            alt="{{ p.name }}">
+          {% elif p.name == "T-shirt" or p.name == "T-Shirt" %}
+          <img loading="lazy"
+            src="../../static/images/back-view-mockup-of-a-woman-wearing-a-bella-canvas-t-shirt-m39788.webp"
+            alt="{{ p.name }}">
+          {% else %}
+          <img loading="lazy" src="../../static/images/UC - X Mark.png" alt="{{ p.name }}">
+          {% endif %}
 
           <div class="product-body">
             <div class="product-cat">{{ p.category_label }}</div>
@@ -123,11 +111,12 @@ Shop
 
             <div class="product-footer">
               <span class="product-price">{{ p.price }}</span>
-              <form method="POST" action="/cart/add" class="add-form" data-product-name="{{ p.name }}">
+              <a href="{{ url_for('shop.add_to_cart', item_slug=p.slug) }}" class="add-form"
+                data-product-name="{{ p.name }}">
                 <input type="hidden" name="product_id" value="{{ p.id }}">
                 <input type="hidden" name="quantity" value="1">
                 <button class="product-add" type="submit">Add to Cart</button>
-              </form>
+              </a>
             </div>
           </div>
         </article>

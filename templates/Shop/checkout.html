@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}
+Checkout
+{% endblock %}
+
+{% block body_class %}
+checkout-page
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="checkout-header">
+  <div class="container">
+    <nav class="checkout-steps" aria-label="Checkout progress">
+      <span class="step step--done">
+        <span class="step-num"><i class="bi bi-check"></i></span>
+        <span class="step-label">Cart</span>
+      </span>
+      <span class="step-divider"></span>
+      <span class="step step--active">
+        <span class="step-num">2</span>
+        <span class="step-label">Details</span>
+      </span>
+      <span class="step-divider"></span>
+      <span class="step">
+        <span class="step-num">3</span>
+        <span class="step-label">Payment</span>
+      </span>
+    </nav>
+    <h1 class="checkout-title">Checkout</h1>
+  </div>
+</section>
+
+<section class="checkout-body">
+  <div class="container">
+    <div class="checkout-layout">
+
+      {# ---------- FORM ---------- #}
+      <form id="checkoutForm" method="POST" class="checkout-form" novalidate>
+        {{ form.hidden_tag() }}
+
+        {# Contact #}
+        <div class="checkout-section">
+          <h2 class="checkout-section-title">
+            <span class="section-num">1</span> Contact
+          </h2>
+
+          <div class="form-group">
+            {{ form.customer_name.label(class="form-label") }}
+            {{ form.customer_name(class="form-control",
+            placeholder="Your full name",
+            autocomplete="name") }}
+            {% for e in form.customer_name.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              {{ form.email.label(class="form-label") }}
+              {{ form.email(class="form-control",
+              placeholder="you@example.com",
+              autocomplete="email") }}
+              {% for e in form.email.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="form-group">
+              {{ form.phone.label(class="form-label") }}
+              {{ form.phone(class="form-control",
+              placeholder="+254 700 000 000",
+              autocomplete="tel") }}
+              {% for e in form.phone.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+            </div>
+          </div>
+        </div>
+
+        {# Delivery #}
+        <div class="checkout-section">
+          <h2 class="checkout-section-title">
+            <span class="section-num">2</span> Delivery
+          </h2>
+
+          <div class="form-group">
+            {{ form.address.label(class="form-label") }}
+            {{ form.address(class="form-control",
+            placeholder="Street address, apartment, unit",
+            autocomplete="street-address") }}
+            {% for e in form.address.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="form-group">
+            {{ form.city.label(class="form-label") }}
+            {{ form.city(class="form-control",
+            placeholder="Nairobi",
+            autocomplete="address-level2") }}
+            {% for e in form.city.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
+          </div>
+
+          <div class="form-group">
+            {{ form.notes.label(class="form-label") }}
+            {{ form.notes(class="form-control", rows="3",
+            placeholder="Gate code, delivery instructions, etc. (optional)") }}
+          </div>
+        </div>
+
+      </form>
+
+      {# ---------- SUMMARY ---------- #}
+      <aside class="checkout-summary">
+        <div class="checkout-summary-card">
+          <h2 class="checkout-summary-title">Order summary</h2>
+
+          <ul class="summary-items">
+            {% for item in items %}
+            <li class="summary-item">
+              <div class="summary-item-img">
+                {% if item.image %}
+                <img src="{{ item.image | img }}" alt="{{ item.name }}">
+                {% else %}
+                <div class="summary-item-img-fallback">
+                  <i class="bi bi-{{ 'book' if item.item_type == 'book' else 'bag' }}"></i>
+                </div>
+                {% endif %}
+                <span class="summary-item-qty">{{ item.quantity }}</span>
+              </div>
+              <div class="summary-item-info">
+                <div class="summary-item-name">{{ item.name }}</div>
+                {% if item.variant_label %}
+                <div class="summary-item-variant">{{ item.variant_label }}</div>
+                {% endif %}
+              </div>
+              <div class="summary-item-price">{{ item.line_total }}</div>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <div class="summary-row summary-row--total">
+            <span>Total</span>
+            <span>{{ cart.total }}</span>
+          </div>
+
+          <button type="submit" form="checkoutForm" class="btn btn-primary checkout-submit">
+            Place Order
+          </button>
+
+          <p class="checkout-summary-fineprint">
+            By placing this order you agree to our <a href="#">terms of service</a>.
+          </p>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}
+Payment · {{ order.unique_id }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="pay-page">
+  <div class="container">
+    <div class="pay-card">
+
+      <div class="pay-ref">
+        <span class="pay-ref-label">Order</span>
+        <code class="pay-ref-value">{{ order.unique_id }}</code>
+      </div>
+
+      <div class="pay-total">
+        <span class="pay-total-label">Amount to pay</span>
+        <span class="pay-total-value">{{ cart.total }}</span>
+      </div>
+
+      <div class="pay-details">
+        <div class="pay-detail-row">
+          <span>Customer</span>
+          <span>{{ order.customer_name }}</span>
+        </div>
+        <div class="pay-detail-row">
+          <span>Email</span>
+          <span>{{ order.email }}</span>
+        </div>
+        <div class="pay-detail-row">
+          <span>Delivering to</span>
+          <span>{{ order.address }}</span>
+        </div>
+      </div>
+
+      <form method="POST" action="#" class="pay-form">
+        <input type="hidden" name="csrf_token" value="">
+        <button type="submit" name="action" value="complete" class="btn btn-primary pay-complete-btn">
+          <i class="bi bi-check-circle me-1"></i>
+          Complete Payment
+        </button>
+        <button type="submit" name="action" value="cancel" class="btn btn-outline pay-cancel-btn">
+          Cancel
+        </button>
+      </form>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

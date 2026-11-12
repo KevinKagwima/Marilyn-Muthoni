@@ -38,28 +38,19 @@ All Books
     <div class="book-tile-cover">
       <img src="../../static/images/UC by MMK Cover-Front.webp" alt="{{ b.title }}">
 
-      {# Status badges #}
-      {% if b.stock <= 0 %} <span class="book-tile-flag book-tile-flag--out">Out</span>
-        {% endif %}
-        {% if b.is_featured %}
-        <span class="book-tile-star" title="Featured on homepage">
-          <i class="bi bi-star-fill"></i>
-        </span>
-        {% endif %}
+      {# Quick actions — always visible, subtle until hover #}
+      <div class="book-tile-actions">
+        <a href="{{ url_for('admin.edit_book', book_slug=b.slug) }}" class="book-tile-action" title="Edit book"
+          aria-label="Edit {{ b.title }}">
+          <i class="bi bi-pencil"></i>
+        </a>
 
-        {# Quick actions — always visible, subtle until hover #}
-        <div class="book-tile-actions">
-          <a href="{{ url_for('admin.edit_book', book_slug=b.slug) }}" class="book-tile-action" title="Edit book"
-            aria-label="Edit {{ b.title }}">
-            <i class="bi bi-pencil"></i>
-          </a>
+        <a href="{{ url_for('admin.delete_book', book_slug=b.slug) }}" class="book-tile-action book-tile-action--danger"
+          title="Delete book" aria-label="Delete {{ b.title }}">
+          <i class="bi bi-trash"></i>
+        </a>
 
-          <a href="{{ url_for('admin.delete_book', book_slug=b.slug) }}"
-            class="book-tile-action book-tile-action--danger" title="Delete book" aria-label="Delete {{ b.title }}">
-            <i class="bi bi-trash"></i>
-          </a>
-
-        </div>
+      </div>
     </div>
 
     <div class="book-tile-info">

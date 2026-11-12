@@ -148,6 +148,13 @@ def edit_product(product_slug):
 
   return render_template("Admin/add-product.html", form=form, product=product)
 
-@admin.route("/remove-product")
-def remove_product():
-  return "Admin"
+@admin.route("/remove-merchendise/<string:product_slug>")
+def delete_product(product_slug):
+  product = Product.query.filter_by(slug=product_slug).first()
+  if not product:
+    flash("Product not found", "danger")
+    return redirect(url_for("admin.products"))
+  db.session.delete(product)
+  db.session.commit()
+  flash("Product removed successfully", "success")
+  return redirect(url_for("admin.products"))

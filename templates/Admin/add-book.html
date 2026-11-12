@@ -6,7 +6,7 @@
 <nav class="admin-breadcrumbs" aria-label="Breadcrumb">
   <a href="#">Dashboard</a>
   <i class="bi bi-chevron-right"></i>
-  <a href="{{ url_for('admin.index') }}">Books</a>
+  <a href="{{ url_for('admin.books') }}">Books</a>
   <i class="bi bi-chevron-right"></i>
   <span>{{ 'Edit' if book else 'New' }}</span>
 </nav>
@@ -52,37 +52,6 @@
           {{ form.synopsis(class="form-control", rows="8",
           placeholder="Long-form description shown on the product detail page.") }}
           {% for e in form.synopsis.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
-        </div>
-      </div>
-
-      <div class="admin-card">
-        <h2 class="admin-card-title">Cover Image</h2>
-
-        <div class="cover-upload">
-          <div class="cover-preview" id="coverPreview">
-            {% if book and book.cover_image %}
-            <img src="{{ book.cover_image }}" alt="Current cover">
-            {% else %}
-            <div class="cover-placeholder">
-              <i class="bi bi-image"></i>
-              <span>No cover uploaded</span>
-            </div>
-            {% endif %}
-          </div>
-
-          <div class="cover-upload-controls">
-            {{ form.cover_image(class="form-control", id="coverInput",
-            accept="image/png,image/jpeg,image/webp,image/gif") }}
-            <div class="form-help">
-              Recommended: 800×1200px (2:3 ratio). PNG, JPG, or WEBP. Max 5 MB.
-            </div>
-            {% for e in form.cover_image.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
-            {% if book and book.cover_image %}
-            <div class="form-help form-help--muted">
-              Uploading a new image will replace the current cover.
-            </div>
-            {% endif %}
-          </div>
         </div>
       </div>
 
@@ -148,18 +117,6 @@
             {% for e in form.pages.errors %}<div class="form-error">{{ e }}</div>{% endfor %}
           </div>
         </div>
-      </div>
-
-      <div class="admin-card">
-        <h2 class="admin-card-title">Visibility</h2>
-        <label class="admin-toggle">
-          {{ form.is_featured(class="admin-toggle-input") }}
-          <span class="admin-toggle-box"></span>
-          <span class="admin-toggle-label">
-            <strong>Feature on homepage</strong>
-            <small>Shows this book in the "Featured" section of the landing page.</small>
-          </span>
-        </label>
       </div>
 
     </aside>

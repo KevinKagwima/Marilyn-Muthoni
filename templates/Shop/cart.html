@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart{% endblock %}
+{% block body_class %}cart-page{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/cart.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="cart-header">
+  <div class="container">
+    <span class="eyebrow">Your Cart</span>
+    {% if items %}
+    <p class="cart-header-sub">
+      Review your items below and proceed to checkout when ready.
+    </p>
+    {% endif %}
+  </div>
+</section>
+<section class="cart-body">
+  <div class="container">
+
+    {% if not items %}
+    <div class="cart-empty">
+      <div class="cart-empty-icon">
+        <i class="bi bi-bag"></i>
+      </div>
+      <h2>Your cart is empty</h2>
+      <p>Browse the shop to add a book, shirt, or tote.</p>
+      <div class="cart-empty-actions">
+        <a href="{{ url_for('shop.catalogue') }}" class="btn btn-primary">
+          Continue Shopping
+        </a>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="cart-layout">
+      <div class="cart-items">
+        {% for item in items %}
+        <article class="cart-item {% if item.out_of_stock %}cart-item--warn{% endif %}">
+          <div class="cart-item-img">
+            {% if item.book_cart.category == "Book" %}
+            <img src="../../static/images/Unconstitutional Hardcover Book - Version.webp" alt="{{ item.title }}">
+            {% elif item.product_cart.category == "Merch" and item.product_cart.name == "Tote Bag" %}
+            <img src="../../static/images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp"
+              alt="{{ item.name }}">
+            {% elif item.product_cart.category == "Merch" and item.product_cart.name == "T-Shirt" %}
+            <img src="../../static/images/back-view-mockup-of-a-woman-wearing-a-bella-canvas-t-shirt-m39788.webp"
+              alt="{{ item.name }}">
+            {% else %}
+            <div class="cart-item-img-fallback">
+              <i class="bi bi-{{ 'book' if item.item_type == 'book' else 'bag' }}"></i>
+            </div>
+            {% endif %}
+          </div>
+
+          {# ----- Info ----- #}
+          <div class="cart-item-info">
+            <h3 class="cart-item-name">{{ item.product_cart.name }}</h3>
+            <p class="cart-item-unit">{{ item.unit_price }}</p>
+            {% if item.out_of_stock %}
+            <p class="cart-item-warn">
+              <i class="bi bi-exclamation-triangle"></i>
+              Only {{ item.available }} in stock — please reduce quantity.
+            </p>
+            {% endif %}
+          </div>
+
+          {# ----- Qty stepper ----- #}
+          <div class="cart-item-qty">
+            <form method="POST" action="#" class="qty-form">
+              <input type="hidden" name="item_type" value="{{ item.item_type }}">
+              <input type="hidden" name="item_id" value="{{ item.item_id }}">
+              <input type="hidden" name="variant_id" value="{{ item.variant_id or '' }}">
+              <button type="button" class="qty-btn qty-btn--dec" aria-label="Decrease quantity">−</button>
+              <input type="number" name="quantity" class="qty-input" value="{{ item.quantity }}" min="1"
+                max="{{ item.available }}" aria-label="Quantity">
+              <button type="button" class="qty-btn qty-btn--inc" aria-label="Increase quantity">+</button>
+            </form>
+          </div>
+
+          {# ----- Line total ----- #}
+          <div class="cart-item-total">
+            {{ item.line_total }}
+          </div>
+
+          {# ----- Remove ----- #}
+          <a href="{{ url_for('shop.remove_cart_item', cart_item_id=item.unique_id) }}" class="cart-item-remove-form">
+            <button type="submit" class="cart-item-remove" aria-label="Remove item">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </a>
+
+        </article>
+        {% endfor %}
+
+        {# ----- Cart actions ----- #}
+        <div class="cart-actions">
+          <a href="{{ url_for('shop.catalogue') }}" class="link-arrow">
+            <i class="bi bi-arrow-left"></i> Continue shopping
+          </a>
+          <form method="POST" action="#" onsubmit="return confirm('Clear the entire cart?');">
+            <button type="submit" class="cart-clear-btn">Clear cart</button>
+          </form>
+        </div>
+
+      </div>
+
+      <aside class="cart-summary">
+        <div class="cart-summary-card">
+          <h2 class="cart-summary-title">Order Summary</h2>
+
+          <div class="cart-summary-row cart-summary-total">
+            <span>Total</span>
+            <span>{{ cart.total }}</span>
+          </div>
+
+          {% set has_oos = items | selectattr('out_of_stock') | list | length > 0 %}
+          {% if has_oos %}
+          <div class="cart-summary-warn">
+            <i class="bi bi-exclamation-triangle"></i>
+            Some items exceed available stock. Adjust quantities to proceed.
+          </div>
+          <button class="btn btn-primary cart-checkout-btn" disabled>
+            Proceed to Checkout
+          </button>
+          {% else %}
+          <a href="{{ url_for('shop.checkout') }}" class="btn btn-primary cart-checkout-btn">
+            Proceed to Checkout
+          </a>
+          {% endif %}
+        </div>
+      </aside>
+
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    'use strict';
+
+    // ---------- Quantity stepper ----------
+    document.querySelectorAll('.qty-form').forEach((form) => {
+      const input = form.querySelector('.qty-input');
+      const dec = form.querySelector('.qty-btn--dec');
+      const inc = form.querySelector('.qty-btn--inc');
+      if (!input) return;
+
+      const submitForm = () => {
+        // Client-side clamp so we don't fire a pointless request
+        const val = parseInt(input.value, 10);
+        const min = parseInt(input.min, 10) || 1;
+        const max = parseInt(input.max, 10) || Infinity;
+        if (isNaN(val) || val < min) {
+          input.value = min;
+        } else if (val > max) {
+          input.value = max;
+        }
+        form.submit();
+      };
+
+      if (dec) {
+        dec.addEventListener('click', () => {
+          const v = parseInt(input.value, 10) || 1;
+          input.value = Math.max((parseInt(input.min, 10) || 1), v - 1);
+          submitForm();
+        });
+      }
+      if (inc) {
+        inc.addEventListener('click', () => {
+          const v = parseInt(input.value, 10) || 1;
+          const max = parseInt(input.max, 10) || Infinity;
+          input.value = Math.min(max, v + 1);
+          submitForm();
+        });
+      }
+      input.addEventListener('change', submitForm);
+    });
+  })();
+</script>
+{% endblock %}

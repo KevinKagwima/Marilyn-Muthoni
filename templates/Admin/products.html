@@ -36,7 +36,14 @@ All Merchendise
   <article class="book-tile">
 
     <div class="book-tile-cover">
-      <img src="../../static/images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp" alt="{{ b.title }}">
+      {% if b.name == "Tote Bag" %}
+      <img src="../../static/images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp" alt="{{ b.name }}">
+      {% elif b.name == "T-shirt" or b.name == "T-Shirt" %}
+      <img src="../../static/images/back-view-mockup-of-a-woman-wearing-a-bella-canvas-t-shirt-m39788.webp"
+        alt="{{ b.name }}">
+      {% else %}
+      <img src="../../static/images/UC - X Mark.png" alt="{{ b.name }}">
+      {% endif %}
 
       {# Status badges #}
       {% if b.stock <= 0 %} <span class="book-tile-flag book-tile-flag--out">Out</span>
@@ -48,8 +55,9 @@ All Merchendise
             <i class="bi bi-pencil"></i>
           </a>
 
-          <a href="{{ url_for('admin.delete_book', book_slug=b.slug) }}"
-            class="book-tile-action book-tile-action--danger" title="Delete book" aria-label="Delete {{ b.title }}">
+          <a href="{{ url_for('admin.delete_product', product_slug=b.slug) }}"
+            class="book-tile-action book-tile-action--danger" title="Delete Merchendise"
+            aria-label="Delete {{ b.name }}">
             <i class="bi bi-trash"></i>
           </a>
 
