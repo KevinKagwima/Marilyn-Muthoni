@@ -7,7 +7,6 @@ from config import Config
 from Models.user import User
 from Auth.routes import auth
 from Shop.routes import shop
-from Home.routes import home
 from Admin.routes import admin
 
 def create_app():
@@ -18,7 +17,6 @@ def create_app():
 
   app.register_blueprint(auth)
   app.register_blueprint(shop)
-  app.register_blueprint(home)
   app.register_blueprint(admin)
 
   login_manager = LoginManager()

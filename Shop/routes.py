@@ -7,6 +7,7 @@ from .form import CheckoutForm
 
 shop = Blueprint("shop", __name__, url_prefix="/shop")
 
+@shop.route("/")
 @shop.route("/catalogue")
 def catalogue():
   context = {
