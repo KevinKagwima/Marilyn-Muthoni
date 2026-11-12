@@ -38,7 +38,7 @@ Payment · {{ order.unique_id }}
         </div>
       </div>
 
-      <form method="POST" action="#" class="pay-form">
+      <form method="POST" action="{{ url_for('shop.process_payment', order_id=order.unique_id) }}" class="pay-form">
         <input type="hidden" name="csrf_token" value="">
         <button type="submit" name="action" value="complete" class="btn btn-primary pay-complete-btn">
           <i class="bi bi-check-circle me-1"></i>

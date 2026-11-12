@@ -27,6 +27,7 @@ class Order(BaseModel, db.Model):
   address = db.Column(db.String(255), nullable=False)
   city = db.Column(db.String(120), nullable=False)
   notes = db.Column(db.Text)
+  status = db.Column(db.String(30), default="active")
   payment_method = db.Column(db.String(30), default="MPESA")
   payment_status = db.Column(db.String(30), default="pending")
   fulfilment_status = db.Column(db.String(30), default="pending")

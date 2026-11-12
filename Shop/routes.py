@@ -103,12 +103,30 @@ def cart():
 
   return render_template("Shop/cart.html", **context)
 
-@shop.route("/clear-cart/<int:cart_id>")
+@shop.route("/clear-cart/<int:cart_id>", methods=["POST"])
 def clear_cart(cart_id):
-  pass
+  cart = Cart.query.filter_by(unique_id=cart_id).first()
 
-@shop.route("/remove/<int:cart_item_id>")
-def remove_cart_item(cart_item_id):
+  if not cart:
+    flash("Cart not found", "danger")
+    return redirect(url_for('shop.catalogue'))
+  
+  order = Order.query.filter_by(cart_id=cart.id).first()
+
+  if order:
+    order.status = "Closed"
+    db.session.commit()
+
+  cart_items = CartItem.query.filter_by(cart_id=cart.id).all()
+  for cart_item in cart_items:
+    db.session.delete(cart_item)
+  db.session.commit()
+
+  flash("Cart cleared successfully", "danger")
+  return redirect(url_for("shop.cart"))
+
+@shop.route("/remove/<int:cart_item_id>/<int:cart_id>")
+def remove_cart_item(cart_item_id, cart_id):
   cart_item = CartItem.query.filter_by(unique_id=cart_item_id).first()
 
   if not cart_item_id:
@@ -117,6 +135,7 @@ def remove_cart_item(cart_item_id):
   
   db.session.delete(cart_item)
   db.session.commit()
+  update_cart_total(cart_id)
   flash("Cart item removed successfully", "success")
 
   return redirect(url_for("shop.cart"))
@@ -132,19 +151,24 @@ def checkout():
     return redirect(url_for("shop.catalogue"))
 
   if form.validate_on_submit():
-    new_order = Order(
-      customer_name = form.customer_name.data,
-      phone = form.phone.data,
-      email = form.email.data,
-      address = form.address.data,
-      city = form.city.data,
-      notes = form.notes.data,
-      cart_id = cart.id
-    )
-    db.session.add(new_order)
-    db.session.commit()
-    flash("Order created successfully", "success")
-    return redirect(url_for("shop.checkout"))
+    existing_order = Order.query.filter_by(status="active", cart_id=cart.id).first()
+
+    if not existing_order:
+      new_order = Order(
+        customer_name = form.customer_name.data,
+        phone = form.phone.data,
+        email = form.email.data,
+        address = form.address.data,
+        city = form.city.data,
+        notes = form.notes.data,
+        cart_id = cart.id
+      )
+      db.session.add(new_order)
+      db.session.commit()
+      flash("Order created successfully", "success")
+      return redirect(url_for("shop.payment", order_id=new_order.unique_id))
+    
+    return redirect(url_for("shop.payment", order_id=existing_order.unique_id))
 
   if form.errors != {}:
     for err_msg in form.errors.values():
@@ -164,7 +188,7 @@ def payment(order_id):
 
   if not order:
     flash("Order not found", "danger")
-    return redirect(url_for("shop.catalogue"))
+    return redirect(url_for("shop.checkout"))
 
   cart = Cart.query.get(order.cart_id)
   if not cart:
@@ -177,3 +201,14 @@ def payment(order_id):
   }
 
   return render_template("Shop/payment.html", **context)
+
+@shop.route("/complete-payment/<int:order_id>", methods=["POST"])
+def process_payment(order_id):
+  order = Order.query.filter_by(unique_id=order_id).first()
+  
+  if not order:
+    flash("Order not found", "danger")
+    return redirect(url_for("shop.checkout"))
+
+  flash("Feature coming soon", "info")
+  return redirect(url_for("shop.payment", order_id=order.unique_id))

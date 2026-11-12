@@ -58,8 +58,20 @@
 
           {# ----- Info ----- #}
           <div class="cart-item-info">
-            <h3 class="cart-item-name">{{ item.product_cart.name }}</h3>
-            <p class="cart-item-unit">{{ item.unit_price }}</p>
+            <h3 class="cart-item-name">
+              {% if item.product_cart.category == "Merch" %}
+              {{ item.product_cart.name }}
+              {% else %}
+              {{ item.book_cart.title }}
+              {% endif %}
+            </h3>
+            <p class="cart-item-unit">
+              {% if item.product_cart.category == "Merch" %}
+              {{ item.product_cart.price }}
+              {% else %}
+              {{ item.book_cart.price }}
+              {% endif %}
+            </p>
             {% if item.out_of_stock %}
             <p class="cart-item-warn">
               <i class="bi bi-exclamation-triangle"></i>
@@ -83,11 +95,12 @@
 
           {# ----- Line total ----- #}
           <div class="cart-item-total">
-            {{ item.line_total }}
+            {{ item.unit_price }}
           </div>
 
           {# ----- Remove ----- #}
-          <a href="{{ url_for('shop.remove_cart_item', cart_item_id=item.unique_id) }}" class="cart-item-remove-form">
+          <a href="{{ url_for('shop.remove_cart_item', cart_item_id=item.unique_id, cart_id=cart.id) }}"
+            class="cart-item-remove-form">
             <button type="submit" class="cart-item-remove" aria-label="Remove item">
               <i class="bi bi-x-lg"></i>
             </button>
@@ -101,7 +114,7 @@
           <a href="{{ url_for('shop.catalogue') }}" class="link-arrow">
             <i class="bi bi-arrow-left"></i> Continue shopping
           </a>
-          <form method="POST" action="#" onsubmit="return confirm('Clear the entire cart?');">
+          <form method="POST" action="{{ url_for('shop.clear_cart', cart_id=cart.unique_id) }}">
             <button type="submit" class="cart-clear-btn">Clear cart</button>
           </form>
         </div>
