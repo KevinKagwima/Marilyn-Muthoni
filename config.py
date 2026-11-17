@@ -15,5 +15,5 @@ class Config:
   ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@example.com")
   ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "Admin@123")
 
-  CACHE_TYPE = "RedisCache"
+  CACHE_TYPE = "SimpleCache"
   CACHE_REDIS_URL = os.environ.get("REDIS_URL")

@@ -206,11 +206,18 @@ def order_detail(order_id):
   if not order:
     flash("Order not found", "danger")
     return redirect(url_for('admin.orders'))
-  
-  context = {
-    "order": order,
-    "payment": Payment.query.filter_by(order_id=order.id).first()
-  }
+
+  payment = Payment.query.filter_by(order_id=order.id).first()
+
+  if payment:
+    context = {
+      "order": order,
+      "payment": Payment.query.filter_by(order_id=order.id).first()
+    }
+  else:
+    context = {
+      "order": order,
+    }
 
   return CachedResponse(
     response = make_response(render_template("Admin/order-detail.html", **context)),
@@ -237,4 +244,23 @@ def verify_payment(payment_id, order_id):
   db.session.commit()
   flash("Payment confirmed successfully", "info")
   return redirect(url_for('admin.order_detail', order_id=order.unique_id))
-  
+
+@admin.route("/remove-order/<int:order_id>")
+def delete_order(order_id):
+  cache.clear()
+  order = Order.query.filter_by(unique_id=order_id, status="active").first()
+
+  if not order:
+    flash("Order could not be removed. Order already paid", "info")
+    return redirect(url_for('admin.orders'))
+
+  cart = Cart.query.get(order.cart_id)
+  if cart:
+    CartItem.query.filter_by(cart_id=cart.id).delete(synchronize_session=False)
+    db.session.commit()
+
+  db.session.delete(cart)
+  db.session.delete(order)
+  db.session.commit()
+  flash("Order removed successfully", "info")
+  return redirect(url_for('admin.orders'))

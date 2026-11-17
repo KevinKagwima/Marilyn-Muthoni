@@ -17,10 +17,14 @@
   <div>
     <div class="order-head-line">
       <h1 class="admin-page-title">#{{ order.unique_id }}</h1>
+      {% if order.status == "active" %}
       <button type="button" class="order-copy-btn" id="copyRefBtn" data-ref="{{ order.reference }}"
         title="Copy order reference">
-        <i class="bi bi-clipboard"></i>
+        <a href="{{ url_for('admin.delete_order', order_id=order.unique_id) }}">
+          <i class="bi bi-trash"></i>
+        </a>
       </button>
+      {% endif %}
       <span class="dash-badge dash-badge--{{ order.payment_status }}">
         {{ order.status | replace('_', ' ') | capitalize }}
       </span>
@@ -330,13 +334,15 @@
         <dt>Amount</dt>
         <dd><strong>{{ "Ksh {:,}".format(order.cart_order.total) }}</strong></dd>
 
+        {% if payment %}
         <dt>Status</dt>
         <dd>
           <span class="dash-badge dash-badge--{{ order.payment_status }}">
             {{ payment.status|capitalize }}
           </span>
         </dd>
-        {% if order.payment_status != "Paid" %}
+        {% endif %}
+        {% if payment and order.payment_status != "Paid" %}
         <a href="{{ url_for('admin.verify_payment', payment_id=payment.unique_id, order_id=order.unique_id) }}"
           type="button" class="btn btn-primary btn-sm">
           <i class="bi bi-printer"></i> Confirm Payment
