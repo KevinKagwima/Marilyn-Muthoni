@@ -1,0 +1,143 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Orders{% endblock %}
+
+{% block breadcrumbs %}
+<nav class="admin-breadcrumbs" aria-label="Breadcrumb">
+  <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+  <i class="bi bi-chevron-right"></i>
+  <span>Orders</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+{# ============ PAGE HEAD ============ #}
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">Orders ({{ items|count }})</h1>
+  </div>
+</div>
+
+<!-- <form method="GET" class="admin-filter-bar" role="search">
+  <div class="admin-search-input">
+    <i class="bi bi-search"></i>
+    <input type="text" name="q" value="{{ q }}" placeholder="Search reference, name, email, phone…" autocomplete="off">
+    {% if q %}
+    <a href="{{ url_for('admin.orders', status=status, payment=payment) }}" class="admin-search-clear"
+      title="Clear search">
+      <i class="bi bi-x-lg"></i>
+    </a>
+    {% endif %}
+  </div>
+
+  <div class="admin-category-tabs">
+    <a href="{{ url_for('admin.orders', q=q) if q else url_for('admin.orders') }}"
+      class="cat-tab {% if not status and not payment %}active{% endif %}">
+      All
+    </a>
+    <a href="{{ url_for('admin.orders', payment='pending_verification', q=q) if q else url_for('admin.orders', payment='pending_verification') }}"
+      class="cat-tab {% if payment == 'pending_verification' %}active{% endif %}">
+      To verify
+      {% if to_verify %}<span class="cat-tab-badge">{{ to_verify }}</span>{% endif %}
+    </a>
+    <a href="{{ url_for('admin.orders', status='processing', q=q) if q else url_for('admin.orders', status='processing') }}"
+      class="cat-tab {% if status == 'processing' %}active{% endif %}">
+      Processing
+    </a>
+    <a href="{{ url_for('admin.orders', status='shipped', q=q) if q else url_for('admin.orders', status='shipped') }}"
+      class="cat-tab {% if status == 'shipped' %}active{% endif %}">
+      Shipped
+    </a>
+    <a href="{{ url_for('admin.orders', status='delivered', q=q) if q else url_for('admin.orders', status='delivered') }}"
+      class="cat-tab {% if status == 'delivered' %}active{% endif %}">
+      Delivered
+    </a>
+    <a href="{{ url_for('admin.orders', status='cancelled', q=q) if q else url_for('admin.orders', status='cancelled') }}"
+      class="cat-tab {% if status == 'cancelled' %}active{% endif %}">
+      Cancelled
+    </a>
+  </div>
+</form> -->
+
+{# ============ TABLE ============ #}
+{% if items %}
+<div class="admin-table-wrap">
+  <table class="admin-table orders-table">
+    <thead>
+      <tr>
+        <th>Reference</th>
+        <th>Customer</th>
+        <th>Items</th>
+        <th class="text-end">Total</th>
+        <th>Payment</th>
+        <th class="text-end">Date</th>
+        <th style="width: 90px;" class="text-end">Verify</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in items %}
+      <tr class="{% if o.payment_status == 'pending_verification' %}row-urgent{% endif %}">
+        <td>
+          <a href="#" class="dash-ref">#{{ o.unique_id }}</a>
+          {% if o.payment_reference %}
+          <div class="order-mpesa-code">
+            <i class="bi bi-phone"></i> {{ o.payment_reference }}
+          </div>
+          {% endif %}
+        </td>
+        <td>
+          <div class="dash-cust">{{ o.customer_name }}</div>
+        </td>
+        <td>
+          <span class="order-items-count">
+            {{ o.cart_order.cart_items|count }} item{{ '' if o.cart_order.cart_items|count == 1 else 's' }}
+          </span>
+        </td>
+        <td class="text-end dash-amount">
+          <b>{{ "Ksh {:,}".format(o.cart_order.total) }}</b>
+        </td>
+        <td>
+          <span class="dash-badge dash-badge--{{ o.payment_status }}">
+            {{ o.payment_status | replace('_', ' ') | capitalize }}
+          </span>
+        </td>
+        <td class="text-end dash-when">{{ o.created_at.strftime('%d %b %Y') }}</td>
+        <td class="text-end">
+          <div class="admin-actions">
+            {% if o.payment_status == 'pending_verification' %}
+            <form method="POST" action="#">
+              <button type=" submit" class="admin-action-btn admin-action-btn--success" title="Verify payment">
+                <i class="bi bi-check2"></i>
+              </button>
+            </form>
+            {% endif %}
+            <a href="{{ url_for('admin.order_detail', order_id=o.unique_id) }}" class="admin-action-btn"
+              title="View order">
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% elif q or status or payment %}
+<div class="admin-empty">
+  <i class="bi bi-search"></i>
+  <h3>No orders match your filters</h3>
+  <p>Try a different search or clear the filters.</p>
+  <a href="#" class="btn btn-outline btn-sm">Clear filters</a>
+</div>
+
+{% else %}
+<div class="admin-empty">
+  <i class="bi bi-receipt"></i>
+  <h3>No orders yet</h3>
+  <p>Orders will appear here once customers complete checkout.</p>
+</div>
+{% endif %}
+
+{% endblock %}
