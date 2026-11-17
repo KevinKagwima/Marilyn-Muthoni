@@ -72,9 +72,9 @@ cart-page
             </h3>
             <p class="cart-item-unit">
               {% if item.product_cart.category == "Merch" %}
-              {{ item.product_cart.price }}
+              {{ "Ksh {:,}".format(item.product_cart.price) }}
               {% else %}
-              {{ item.book_cart.price }}
+              {{ "Ksh {:,}".format(item.book_cart.price) }}
               {% endif %}
             </p>
             {% if item.out_of_stock %}
@@ -99,7 +99,7 @@ cart-page
 
           {# ----- Line total ----- #}
           <div class="cart-item-total">
-            {{ item.unit_price }}
+            {{ "Ksh {:,}".format(item.unit_price) }}
           </div>
 
           {# ----- Remove ----- #}
@@ -131,7 +131,7 @@ cart-page
 
           <div class="cart-summary-row cart-summary-total">
             <span>Total</span>
-            <span>{{ cart.total }}</span>
+            <span>{{ "Ksh {:,}".format(cart.total) }}</span>
           </div>
 
           {% set has_oos = items | selectattr('out_of_stock') | list | length > 0 %}

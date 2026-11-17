@@ -60,7 +60,7 @@ Shop
             <p class="product-desc">{{ p.synopsis|truncate(40) }}</p>
 
             <div class="product-footer">
-              <span class="product-price">{{ p.price }}</span>
+              <span class="product-price">{{ "Ksh {:,}".format(p.price) }}</span>
 
               {% if p.forthcoming %}
               <button class="product-add" type="button" disabled>
@@ -110,7 +110,7 @@ Shop
             <p class="product-desc">{{ p.description }}</p>
 
             <div class="product-footer">
-              <span class="product-price">{{ p.price }}</span>
+              <span class="product-price">{{ "Ksh {:,}".format(p.price) }}</span>
               <a href="{{ url_for('shop.add_to_cart', item_slug=p.slug) }}" class="add-form"
                 data-product-name="{{ p.name }}">
                 <input type="hidden" name="product_id" value="{{ p.id }}">

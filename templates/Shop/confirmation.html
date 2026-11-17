@@ -37,7 +37,7 @@
             <div class="confirmation-item-name">{{ item.product_name }}</div>
           </div>
           <div class="confirmation-item-qty">× {{ item.quantity }}</div>
-          <div class="confirmation-item-price">{{ order.cart_order.total }}</div>
+          <div class="confirmation-item-price">{{ "Ksh {:,}".format(order.cart_order.total) }}</div>
         </li>
         {% endfor %}
       </ul>
@@ -59,7 +59,7 @@
           </div>
           <div class="confirmation-txn-row">
             <span>Amount</span>
-            <span>{{ order.cart_order.total }}</span>
+            <span>{{ "Ksh {:,}".format(order.cart_order.total) }}</span>
           </div>
         </div>
       </div>

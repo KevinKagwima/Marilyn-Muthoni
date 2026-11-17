@@ -219,7 +219,7 @@ def order_detail(order_id):
 
 @admin.route("/verify-payment/<int:payment_id>/<int:order_id>")
 def verify_payment(payment_id, order_id):
-  # cache.clear()
+  cache.clear()
   payment = Payment.query.filter_by(unique_id=payment_id, status="pending").first()
   order = Order.query.filter_by(unique_id=order_id).first()
 

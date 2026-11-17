@@ -130,14 +130,13 @@ checkout-page
                 <div class="summary-item-variant">{{ item.variant_label }}</div>
                 {% endif %}
               </div>
-              <div class="summary-item-price">{{ item.line_total }}</div>
             </li>
             {% endfor %}
           </ul>
 
           <div class="summary-row summary-row--total">
             <span>Total</span>
-            <span>{{ cart.total }}</span>
+            <span>{{ "Ksh {:,}".format(cart.total) }}</span>
           </div>
 
           <button type="submit" form="checkoutForm" class="btn btn-primary checkout-submit">

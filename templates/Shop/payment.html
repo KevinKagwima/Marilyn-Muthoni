@@ -37,7 +37,7 @@ Payment · {{ order.unique_id }}
 
       <div class="pay-total">
         <span class="pay-total-label">Amount to pay</span>
-        <span class="pay-total-value">{{ order.cart_order.total }}</span>
+        <span class="pay-total-value">{{ "Ksh {:,}".format(order.cart_order.total) }}</span>
       </div>
       <div class="pay-method">
         <span class="pay-method-eyebrow">Payment method</span>
@@ -73,7 +73,7 @@ Payment · {{ order.unique_id }}
             <li>Open <strong>M-Pesa</strong> on your phone</li>
             <li>Select <strong>Lipa na M-Pesa</strong> → <strong>Pochi la Biashara</strong></li>
             <li>Enter <strong>0725525972</strong> as the number</li>
-            <li>Enter <strong>{{ order.cart_order.total }}</strong> as the amount</li>
+            <li>Enter <strong>{{ "Ksh {:,}".format(order.cart_order.total) }}</strong> as the amount</li>
             <li>Confirm with your M-Pesa PIN</li>
           </ol>
         </div>
