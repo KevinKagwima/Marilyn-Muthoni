@@ -1,46 +1,68 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session, make_response
 from Models.base_model import db
 from Models.book import Book
 from Models.product import Product
 from Models.order import Cart, CartItem, Order
 from Models.payment import Payment
 from .form import CheckoutForm, PaymentForm
+from flask_caching import Cache, CachedResponse
+from flask_redis import FlaskRedis
 
 shop = Blueprint("shop", __name__, url_prefix="/shop")
+cache = Cache()
+redis_client = FlaskRedis()
 
 @shop.route("/")
 def catalogue():
-  context = {
-    "books": Book.query.all(),
-    "merchandise" : Product.query.all(),
-  }
+  cart_id = session.get("cart_id")
+  if cart_id:
+    cart = Cart.query.get(cart_id)
+    context = {
+      "books": Book.query.all(),
+      "merchandise" : Product.query.all(),
+      "cart": cart
+    }
+  else:
+    context = {
+      "books": Book.query.all(),
+      "merchandise" : Product.query.all(),
+    }
 
-  return render_template("Shop/shop.html", **context)
+  return CachedResponse(
+    response = make_response(render_template("Shop/shop.html", **context)), 
+    timeout=600
+  )
 
 @shop.route("/<string:item_slug>/add-to-cart")
 def add_to_cart(item_slug):
-  item = Book.query.filter_by(slug=item_slug).first() or Product.query.filter_by(slug=item_slug).first()
-  
-  if not item:
-    flash("item not found", category="danger")
+  cache.clear()
+  try:
+    item = Book.query.filter_by(slug=item_slug).first() or Product.query.filter_by(slug=item_slug).first()
+    
+    if not item:
+      flash("item not found", category="danger")
+      return redirect(url_for('shop.catalogue'))
+
+    existing_cart = Cart.query.filter_by(status="active", id=session.get("cart_id")).first()
+
+    if not existing_cart:
+      new_cart = Cart()
+      db.session.add(new_cart)
+      db.session.commit()
+      session["cart_id"] = new_cart.id
+
+      update_cart_items(new_cart.id, item.id, item.category)
+    else:
+      update_cart_items(existing_cart.id, item.id, item.category)
+
+    flash("Item added to cart", "success")
+    return redirect(url_for("shop.catalogue"))
+  except:
+    flash("An error occurred", "warning")
     return redirect(url_for('shop.catalogue'))
 
-  existing_cart = Cart.query.filter_by(status="active", id=session.get("cart_id")).first()
-
-  if not existing_cart:
-    new_cart = Cart()
-    db.session.add(new_cart)
-    db.session.commit()
-    session["cart_id"] = new_cart.id
-
-    update_cart_items(new_cart.id, item.id, item.category)
-  else:
-    update_cart_items(existing_cart.id, item.id, item.category)
-
-  flash("Item added to cart", "success")
-  return redirect(url_for("shop.catalogue"))
-
 def update_cart_items(cart_id, item_id, item_category):
+  cache.clear()
   if item_category == "Book":
     item = Book.query.get(item_id)
     existing_cart_item = CartItem.query.filter_by(product_name=item.title, cart_id=cart_id).first()
@@ -80,6 +102,7 @@ def update_cart_items(cart_id, item_id, item_category):
   update_cart_total(cart_id)
 
 def update_cart_total(cart_id):
+  cache.clear()
   cart = Cart.query.get(cart_id)
   if cart:
     cart_items = CartItem.query.filter_by(cart_id=cart.id).all()
@@ -102,10 +125,14 @@ def cart():
     "cart": cart
   }
 
-  return render_template("Shop/cart.html", **context)
+  return CachedResponse(
+    response = make_response(render_template("Shop/cart.html", **context)),
+    timeout=600
+  )
 
 @shop.route("/add-quantity/<int:cart_item_id>")
 def add_quantity(cart_item_id):
+  cache.clear()
   try:
     cart_item = CartItem.query.filter_by(unique_id=cart_item_id).first()
 
@@ -133,6 +160,7 @@ def add_quantity(cart_item_id):
 
 @shop.route("/remove-quantity/<int:cart_item_id>")
 def remove_quantity(cart_item_id):
+  cache.clear()
   try:
     cart_item = CartItem.query.filter_by(unique_id=cart_item_id).first()
 
@@ -162,127 +190,157 @@ def remove_quantity(cart_item_id):
     flash(f"{repr(e)}")
     return redirect(url_for('shop.cart'))
 
-@shop.route("/clear-cart/<int:cart_id>", methods=["POST"])
+@shop.route("/clear-cart/<int:cart_id>")
 def clear_cart(cart_id):
-  cart = Cart.query.filter_by(unique_id=cart_id).first()
+  cache.clear()
+  try:
+    cart = Cart.query.filter_by(unique_id=cart_id).first()
 
-  if not cart:
-    flash("Cart not found", "danger")
-    return redirect(url_for('shop.catalogue'))
-  
-  order = Order.query.filter_by(cart_id=cart.id).first()
+    if not cart:
+      flash("Cart not found", "danger")
+      return redirect(url_for('shop.catalogue'))
+    
+    order = Order.query.filter_by(cart_id=cart.id).first()
 
-  if order:
-    order.status = "Closed"
+    if order:
+      order.status = "Closed"
+      db.session.commit()
+
+    cart_items = CartItem.query.filter_by(cart_id=cart.id).all()
+    for cart_item in cart_items:
+      db.session.delete(cart_item)
     db.session.commit()
 
-  cart_items = CartItem.query.filter_by(cart_id=cart.id).all()
-  for cart_item in cart_items:
-    db.session.delete(cart_item)
-  db.session.commit()
-
-  flash("Cart cleared successfully", "danger")
-  return redirect(url_for("shop.cart"))
+    flash("Cart cleared successfully", "danger")
+    return redirect(url_for("shop.cart"))
+  except:
+    flash("An error occurred", "warning")
+    return redirect(url_for('shop.catalogue'))
 
 @shop.route("/remove/<int:cart_item_id>/<int:cart_id>")
 def remove_cart_item(cart_item_id, cart_id):
-  cart_item = CartItem.query.filter_by(unique_id=cart_item_id).first()
+  cache.clear()
+  try:
+    cart_item = CartItem.query.filter_by(unique_id=cart_item_id).first()
 
-  if not cart_item_id:
-    flash("Cart item not found", "danger")
+    if not cart_item_id:
+      flash("Cart item not found", "danger")
+      return redirect(url_for("shop.cart"))
+    
+    db.session.delete(cart_item)
+    db.session.commit()
+    update_cart_total(cart_id)
+    flash("Cart item removed successfully", "success")
+
     return redirect(url_for("shop.cart"))
-  
-  db.session.delete(cart_item)
-  db.session.commit()
-  update_cart_total(cart_id)
-  flash("Cart item removed successfully", "success")
-
-  return redirect(url_for("shop.cart"))
+  except:
+    flash("An error occurred", "warning")
+    return redirect(url_for('shop.catalogue'))
 
 @shop.route("/checkout", methods=["POST", "GET"])
 def checkout():
-  form = CheckoutForm()
-  cart_id = session.get("cart_id")
-  cart = Cart.query.get(cart_id)
+  try:
+    form = CheckoutForm()
+    cart_id = session.get("cart_id")
+    cart = Cart.query.get(cart_id)
 
-  if not cart:
-    flash("Cart not found", "danger")
-    return redirect(url_for("shop.catalogue"))
+    if not cart:
+      flash("Cart not found", "danger")
+      return redirect(url_for("shop.catalogue"))
 
-  if form.validate_on_submit():
-    existing_order = Order.query.filter_by(status="active", cart_id=cart.id).first()
+    if form.validate_on_submit():
+      cache.clear()
+      existing_order = Order.query.filter_by(status="active", cart_id=cart.id).first()
 
-    if not existing_order:
-      new_order = Order(
-        customer_name = form.customer_name.data,
-        phone = form.phone.data,
-        email = form.email.data,
-        address = form.address.data,
-        city = form.city.data,
-        notes = form.notes.data,
-        cart_id = cart.id
-      )
-      db.session.add(new_order)
-      db.session.commit()
-      flash("Order created successfully", "success")
-      return redirect(url_for("shop.payment", order_id=new_order.unique_id))
-    
-    return redirect(url_for("shop.payment", order_id=existing_order.unique_id))
+      if not existing_order:
+        new_order = Order(
+          customer_name = form.customer_name.data,
+          phone = form.phone.data,
+          email = form.email.data,
+          address = form.address.data,
+          city = form.city.data,
+          notes = form.notes.data,
+          cart_id = cart.id
+        )
+        db.session.add(new_order)
+        db.session.commit()
+        flash("Order created successfully", "success")
+        return redirect(url_for("shop.payment", order_id=new_order.unique_id))
+      
+      return redirect(url_for("shop.payment", order_id=existing_order.unique_id))
 
-  if form.errors != {}:
-    for err_msg in form.errors.values():
-      flash(f"{err_msg}", category="danger")
-    return redirect(url_for("shop.checkout"))
+    if form.errors != {}:
+      for err_msg in form.errors.values():
+        flash(f"{err_msg}", category="danger")
+      return redirect(url_for("shop.checkout"))
 
-  context = {
-    "form": form,
-    "cart": cart
-  }
+    context = {
+      "form": form,
+      "cart": cart
+    }
 
-  return render_template("Shop/checkout.html", **context)
+    return CachedResponse(
+      response = make_response(render_template("Shop/checkout.html", **context)),
+      timeout = 600
+    )
+  except:
+    flash("An error occurred", "warning")
+    return redirect(url_for('shop.catalogue'))
 
 @shop.route("/payment/<int:order_id>")
 def payment(order_id):
-  order = Order.query.filter_by(unique_id=order_id).first()
-  form = PaymentForm()
+  try:
+    order = Order.query.filter_by(unique_id=order_id).first()
+    form = PaymentForm()
 
-  if not order:
-    flash("Order not found", "danger")
-    return redirect(url_for("shop.checkout"))
+    if not order:
+      flash("Order not found", "danger")
+      return redirect(url_for("shop.checkout"))
 
-  cart = Cart.query.get(order.cart_id)
-  if not cart:
-    flash("Cart not found", "Danger")
+    cart = Cart.query.get(order.cart_id)
+    if not cart:
+      flash("Cart not found", "Danger")
+      return redirect(url_for('shop.catalogue'))
+
+    context = {
+      "cart": cart,
+      "order": order,
+      "form": form
+    }
+
+    return CachedResponse(
+      response = make_response(render_template("Shop/payment.html", **context)),
+      timeout=600
+    )
+  except:
+    flash("An error occurred", "warning")
     return redirect(url_for('shop.catalogue'))
-
-  context = {
-    "cart": cart,
-    "order": order,
-    "form": form
-  }
-
-  return render_template("Shop/payment.html", **context)
 
 @shop.route("/complete-payment/<int:order_id>", methods=["POST"])
 def process_payment(order_id):
-  order = Order.query.filter_by(unique_id=order_id).first()
-  if not order:
-    flash("Order not found", "danger")
-    return redirect(url_for("shop.checkout"))
-  order_payment = Payment.query.filter_by(status="Pending", order_id=order.id).first()
-  if order_payment:
-    flash("You have a pending order. Clear it to add another one", "warning")
-    return redirect(url_for("shop.payment", order_id=order.unique_id))
+  try:
+    cache.clear()
+    order = Order.query.filter_by(unique_id=order_id).first()
+    if not order:
+      flash("Order not found", "danger")
+      return redirect(url_for("shop.checkout"))
+    order_payment = Payment.query.filter_by(status="Pending", order_id=order.id).first()
+    if order_payment:
+      flash("You have a pending order. Clear it to add another one", "warning")
+      return redirect(url_for("shop.payment", order_id=order.unique_id))
 
-  new_payment = Payment(
-    mpesa_code = request.form.get("mpesa_code"),
-    order_id = order.id
-  )
-  db.session.add(new_payment)
-  db.session.commit()
-  flash("Thank you for your payment.Your payment will be verified soon", "success")
+    new_payment = Payment(
+      mpesa_code = request.form.get("mpesa_code"),
+      order_id = order.id
+    )
+    db.session.add(new_payment)
+    db.session.commit()
+    flash("Thank you for your payment.Your payment will be verified soon", "success")
 
-  return redirect(url_for("shop.payment_confirmation", payment_id=new_payment.unique_id))
+    return redirect(url_for("shop.payment_confirmation", payment_id=new_payment.unique_id))
+  except:
+    flash("An error occurred", "warning")
+    return redirect(url_for('shop.catalogue'))
 
 @shop.route("/payment-confirmation/<int:payment_id>")
 def payment_confirmation(payment_id):
@@ -296,4 +354,7 @@ def payment_confirmation(payment_id):
     "order": payment.payment_order
   }
 
-  return render_template("Shop/confirmation.html", **context)
+  return CachedResponse(
+    response = make_response(render_template("Shop/confirmation.html", **context)),
+    timeout=600
+  )

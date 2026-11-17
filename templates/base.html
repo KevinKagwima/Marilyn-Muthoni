@@ -57,8 +57,11 @@
         <li><a href="https://marilynkamuru.com/#contact">Contact</a></li>
       </ul>
 
-      <a href="{{ url_for('shop.cart') }}">
+      <a id="cart-link" href="{{ url_for('shop.cart') }}">
         <i id="cart-btn" class="bi bi-bag"></i>
+        {% if cart.cart_items %}
+        <span id="cart-icon">{{ cart.cart_items|count }}</span>
+        {% endif %}
       </a>
 
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">

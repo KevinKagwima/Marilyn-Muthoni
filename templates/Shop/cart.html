@@ -118,9 +118,9 @@ cart-page
           <a href="{{ url_for('shop.catalogue') }}" class="link-arrow">
             <i class="bi bi-arrow-left"></i> Continue shopping
           </a>
-          <form method="POST" action="{{ url_for('shop.clear_cart', cart_id=cart.unique_id) }}">
+          <a href="{{ url_for('shop.clear_cart', cart_id=cart.unique_id) }}">
             <button type="submit" class="cart-clear-btn">Clear cart</button>
-          </form>
+          </a>
         </div>
 
       </div>

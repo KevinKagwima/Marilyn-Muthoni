@@ -166,6 +166,27 @@ h5 {
   font-size: 2ch;
 }
 
+#cart-link {
+  position: relative;
+}
+
+#cart-icon {
+  position: absolute;
+  top: 0;
+  right: -0.6rem;
+  padding: 0.2rem;
+  background-color: red;
+  height: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  font-size: 1.3ch;
+  font-weight: bold;
+  color: var(--cream);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;

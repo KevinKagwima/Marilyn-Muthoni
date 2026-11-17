@@ -6,13 +6,15 @@ from flask_migrate import Migrate
 from config import Config
 from Models.user import User
 from Auth.routes import auth
-from Shop.routes import shop
+from Shop.routes import shop, cache, redis_client
 from Admin.routes import admin
 
 def create_app():
   app = Flask(__name__)
   app.config.from_object(Config)
   db.init_app(app)
+  cache.init_app(app)
+  redis_client.init_app(app)
   Migrate(app, db)
 
   app.register_blueprint(auth)
