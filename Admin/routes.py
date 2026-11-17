@@ -1,8 +1,12 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session, make_response
 from Models.book import *
 from Models.product import *
+from Models.order import Order, Cart, CartItem
+from Models.payment import Payment
 from .form import BookForm, ProductForm
 from slugify import slugify
+from flask_caching import CachedResponse
+from Shop.routes import cache
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -14,7 +18,10 @@ def dashboard():
     "books": books
   }
 
-  return render_template("Admin/books.html", **context)
+  return CachedResponse(
+    response = make_response(render_template("Admin/books.html", **context)),
+    timeout=600
+  )
 
 @admin.route("/books")
 def books():
@@ -24,13 +31,17 @@ def books():
     "books": books
   }
 
-  return render_template("Admin/books.html", **context)
+  return CachedResponse(
+    response = make_response(render_template("Admin/books.html", **context)),
+    timeout=600
+  )
 
 @admin.route("/add-book", methods=["POST", "GET"])
 def add_book():
   form = BookForm()
   
   if form.validate_on_submit():
+    cache.clear()
     new_book = Book(
       title = form.title.data,
       slug = slugify(form.title.data),
@@ -54,7 +65,10 @@ def add_book():
       flash(f"{err_msg}", category="danger")
     return redirect(url_for("admin.books"))
 
-  return render_template("Admin/add-book.html", form=form)
+  return CachedResponse(
+    response=make_response(render_template("Admin/add-book.html", form=form)),
+    timeout=600
+  )
 
 @admin.route("/edit-book/<string:book_slug>", methods=["POST", "GET"])
 def edit_book(book_slug):
@@ -66,6 +80,7 @@ def edit_book(book_slug):
   form = BookForm(obj=book)
   
   if form.validate_on_submit():
+    cache.clear()
     form.populate_obj(book)
     book.slug = slugify(form.title.data)
     db.session.commit()
@@ -81,6 +96,7 @@ def edit_book(book_slug):
 
 @admin.route("/delete-book/<string:book_slug>", methods=["POST", "GET"])
 def delete_book(book_slug):
+  cache.clear()
   book = Book.query.filter_by(slug=book_slug).first()
   if not book:
     flash("Book not found", "danger")
@@ -98,13 +114,17 @@ def products():
     "products": products
   }
 
-  return render_template("Admin/products.html", **context)
+  return CachedResponse(
+    response=make_response(render_template("Admin/products.html", **context)),
+    timeout=600
+  )
 
 @admin.route("/add-product", methods=["POST", "GET"])
 def add_product():
   form = ProductForm()
     
   if form.validate_on_submit():
+    cache.clear()
     new_product = Product(
       name = form.name.data,
       slug = slugify(form.name.data),
@@ -123,7 +143,10 @@ def add_product():
       flash(f"{err_msg}", category="danger")
     return redirect(url_for("admin.products"))
 
-  return render_template("Admin/add-product.html", form=form)
+  return CachedResponse(
+    response=make_response(render_template("Admin/add-product.html", form=form)),
+    timeout=600
+  )
 
 @admin.route("/edit-merchendise/<string:product_slug>", methods=["POST", "GET"])
 def edit_product(product_slug):
@@ -135,6 +158,7 @@ def edit_product(product_slug):
   form = ProductForm(obj=product)
   
   if form.validate_on_submit():
+    cache.clear()
     form.populate_obj(product)
     product.slug = slugify(form.name.data)
     db.session.commit()
@@ -146,10 +170,14 @@ def edit_product(product_slug):
       flash(f"{err_msg}", category="danger")
     return redirect(url_for("admin.books"))
 
-  return render_template("Admin/add-product.html", form=form, product=product)
+  return CachedResponse(
+    response = make_response(render_template("Admin/add-product.html", form=form, product=product)),
+    timeout=600
+  )
 
 @admin.route("/remove-merchendise/<string:product_slug>")
 def delete_product(product_slug):
+  cache.clear()
   product = Product.query.filter_by(slug=product_slug).first()
   if not product:
     flash("Product not found", "danger")
@@ -158,3 +186,55 @@ def delete_product(product_slug):
   db.session.commit()
   flash("Product removed successfully", "success")
   return redirect(url_for("admin.products"))
+
+@admin.route("/orders")
+def orders():
+  orders = Order.query.all()
+  
+  context = {
+    "items": orders
+  }
+
+  return CachedResponse(
+    response = make_response(render_template("Admin/orders.html", **context)),
+    timeout=600
+  )
+
+@admin.route("/order/<int:order_id>")
+def order_detail(order_id):
+  order = Order.query.filter_by(unique_id=order_id).first()
+  if not order:
+    flash("Order not found", "danger")
+    return redirect(url_for('admin.orders'))
+  
+  context = {
+    "order": order,
+    "payment": Payment.query.filter_by(order_id=order.id).first()
+  }
+
+  return CachedResponse(
+    response = make_response(render_template("Admin/order-detail.html", **context)),
+    timeout=600
+  )
+
+@admin.route("/verify-payment/<int:payment_id>/<int:order_id>")
+def verify_payment(payment_id, order_id):
+  # cache.clear()
+  payment = Payment.query.filter_by(unique_id=payment_id, status="pending").first()
+  order = Order.query.filter_by(unique_id=order_id).first()
+
+  if not payment or not order:
+    flash("Payment could not be verified", "info")
+    return redirect(url_for('admin.orders'))
+
+  if payment.order_id != order.id:
+    flash("Payment could not be verified", "info")
+    return redirect(url_for('admin.orders'))
+
+  order.payment_status = "Paid"
+  order.status = "Closed"
+  payment.status = "Confirmed"
+  db.session.commit()
+  flash("Payment confirmed successfully", "info")
+  return redirect(url_for('admin.order_detail', order_id=order.unique_id))
+  
