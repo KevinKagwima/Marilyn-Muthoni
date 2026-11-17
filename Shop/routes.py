@@ -296,4 +296,4 @@ def payment_confirmation(payment_id):
     "order": payment.payment_order
   }
 
-  return render_template("shop/confirmation.html", **context)
+  return render_template("Shop/confirmation.html", **context)
