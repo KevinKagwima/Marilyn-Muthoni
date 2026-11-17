@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}
+Shop Catalogue
+{% endblock %}
+
+{% block body_class %}
+Shop
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/shop.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="shop-header">
+  <div class="container">
+    <span class="eyebrow">The Collection</span>
+    <h1 class="page-title">Books &amp; Merchandise</h1>
+    <p class="page-sub">
+      Every book, essay, and branded piece in one place - browse the full
+      collection or jump straight to what you're looking for.
+    </p>
+  </div>
+</section>
+
+<section class="shop-body">
+  <div class="container">
+
+    <div class="toggle-wrap">
+      <div class="category-toggle" role="tablist" aria-label="Choose category">
+        <button type="button" role="tab" class="cat-btn {% if active_category == 'books' %}active{% endif %}"
+          data-target="books" aria-selected="{{ 'true' if active_category == 'books' else 'false' }}">
+          <i class="bi bi-book"></i>
+          Books
+          <span class="count">{{ books|length }}</span>
+        </button>
+        <button type="button" role="tab" class="cat-btn {% if active_category == 'merch' %}active{% endif %}"
+          data-target="merch" aria-selected="{{ 'true' if active_category == 'merch' else 'false' }}">
+          <i class="bi bi-bag"></i>
+          Merchandise
+          <span class="count">{{ merchandise|length }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="products-section" id="books-section" {% if active_category !='books' %}{% endif %}>
+      {% if books %}
+      <div class="product-grid books">
+        {% for p in books %}
+        <article class="product-card">
+          <img loading="lazy" src="../../static/images/UC by MMK Cover-Front.webp" alt="{{ p.title }}">
+
+          <div class="product-body">
+            <div class="product-cat">{{ p.subtitle }}</div>
+            <h3 class="product-title">
+              <a href="#">{{ p.title }}</a>
+            </h3>
+            <p class="product-desc">{{ p.synopsis|truncate(40) }}</p>
+
+            <div class="product-footer">
+              <span class="product-price">{{ p.price }}</span>
+
+              {% if p.forthcoming %}
+              <button class="product-add" type="button" disabled>
+                Coming {{ p.badge_year or 'Soon' }}
+              </button>
+              {% else %}
+              <a href="{{ url_for('shop.add_to_cart', item_slug=p.slug) }}" class="add-form"
+                data-product-name="{{ p.slug }}">
+                <input type="hidden" name="product_id" value="{{ p.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button class="product-add" type="submit">Add to Cart</button>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p>No books available yet — check back soon.</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="products-section" id="merch-section" {% if active_category !='merch' %}hidden{% endif %}>
+      {% if merchandise %}
+      <div class="product-grid merch">
+        {% for p in merchandise %}
+        <article class="product-card">
+          {% if p.name == "Tote Bag" %}
+          <img loading="lazy" src="../../static/images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp"
+            alt="{{ p.name }}">
+          {% elif p.name == "T-shirt" or p.name == "T-Shirt" %}
+          <img loading="lazy"
+            src="../../static/images/back-view-mockup-of-a-woman-wearing-a-bella-canvas-t-shirt-m39788.webp"
+            alt="{{ p.name }}">
+          {% else %}
+          <img loading="lazy" src="../../static/images/UC - X Mark.png" alt="{{ p.name }}">
+          {% endif %}
+
+          <div class="product-body">
+            <div class="product-cat">{{ p.category_label }}</div>
+            <h3 class="product-title">
+              <a href="#">{{ p.name }}</a>
+            </h3>
+            <p class="product-desc">{{ p.description }}</p>
+
+            <div class="product-footer">
+              <span class="product-price">{{ p.price }}</span>
+              <a href="{{ url_for('shop.add_to_cart', item_slug=p.slug) }}" class="add-form"
+                data-product-name="{{ p.name }}">
+                <input type="hidden" name="product_id" value="{{ p.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button class="product-add" type="submit">Add to Cart</button>
+              </a>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p>Merchandise is coming soon — check back later.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    'use strict';
+
+    const toggle = document.querySelector('.category-toggle');
+    const booksSection = document.getElementById('books-section');
+    const merchSection = document.getElementById('merch-section');
+
+    if (toggle && booksSection && merchSection) {
+      toggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('.cat-btn');
+        if (!btn) return;
+        const target = btn.dataset.target;
+
+        toggle.querySelectorAll('.cat-btn').forEach((b) => {
+          const isActive = b === btn;
+          b.classList.toggle('active', isActive);
+          b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
+
+        booksSection.hidden = target !== 'books';
+        merchSection.hidden = target !== 'merch';
+
+        // Update the URL so the current category is deep-linkable
+        const url = new URL(window.location);
+        url.searchParams.set('category', target);
+        window.history.replaceState({}, '', url);
+      });
+    }
+
+    const toastStack = document.getElementById('toastStack');
+    function showToast(message) {
+      if (!toastStack) return;
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.innerHTML = '<i class="bi bi-check-circle-fill"></i><span>' + message + '</span>';
+      toastStack.appendChild(el);
+      setTimeout(() => {
+        el.classList.add('leaving');
+        setTimeout(() => el.remove(), 300);
+      }, 2600);
+    }
+
+    document.querySelectorAll('.add-form').forEach((form) => {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = form.dataset.productName || 'Item';
+        showToast(name + ' added to cart');
+        // When backend is ready, remove e.preventDefault() above and let the
+        // form POST to /cart/add (or url_for('cart.add')).
+      });
+    });
+  })();
+</script>
+{% endblock %}

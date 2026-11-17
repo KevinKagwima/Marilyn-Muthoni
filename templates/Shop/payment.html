@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}
+Payment · {{ order.unique_id }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="pay-page">
+  <div class="container">
+
+    <div class="pay-progress">
+      <span class="step step--done">
+        <span class="step-num"><i class="bi bi-check"></i></span>
+        <span class="step-label">Details</span>
+      </span>
+      <span class="step-divider"></span>
+      <span class="step step--active">
+        <span class="step-num">3</span>
+        <span class="step-label">Payment</span>
+      </span>
+      <span class="step-divider"></span>
+      <span class="step">
+        <span class="step-num">4</span>
+        <span class="step-label">Receipt</span>
+      </span>
+    </div>
+
+    <div class="pay-card">
+      <div class="pay-ref">
+        <span class="pay-ref-label">Order</span>
+        <code class="pay-ref-value">{{ order.unique_id }}</code>
+      </div>
+
+      <div class="pay-total">
+        <span class="pay-total-label">Amount to pay</span>
+        <span class="pay-total-value">{{ order.cart_order.total }}</span>
+      </div>
+      <div class="pay-method">
+        <span class="pay-method-eyebrow">Payment method</span>
+
+        <div class="pay-method-card">
+          <div class="pay-method-head">
+            <div class="pay-method-brand">
+              <div class="pay-method-logo">
+                <i class="bi bi-phone-fill"></i>
+              </div>
+              <div>
+                <strong>Pochi la Biashara</strong>
+                <small>M-Pesa · Safaricom</small>
+              </div>
+            </div>
+            <span class="pay-method-badge">Mobile money</span>
+          </div>
+
+          <div class="pay-method-number">
+            <span class="pay-method-number-label">Send to</span>
+            <div class="pay-method-number-row">
+              <span class="pay-method-phone" id="pochiPhone">0725525972</span>
+              <button type="button" class="pay-method-copy" id="copyPochiBtn" data-copy="0725525972"
+                aria-label="Copy phone number">
+                <i class="bi bi-clipboard"></i>
+                <span>Copy</span>
+              </button>
+            </div>
+            <span class="pay-method-name">Name: <strong>Marylin Kamuru</strong></span>
+          </div>
+
+          <ol class="pay-method-steps">
+            <li>Open <strong>M-Pesa</strong> on your phone</li>
+            <li>Select <strong>Lipa na M-Pesa</strong> → <strong>Pochi la Biashara</strong></li>
+            <li>Enter <strong>0725525972</strong> as the number</li>
+            <li>Enter <strong>{{ order.cart_order.total }}</strong> as the amount</li>
+            <li>Confirm with your M-Pesa PIN</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- <div class="pay-details">
+        <div class="pay-detail-row">
+          <span>Customer</span>
+          <span>{{ order.customer_name }}</span>
+        </div>
+        <div class="pay-detail-row">
+          <span>Email</span>
+          <span>{{ order.email }}</span>
+        </div>
+        <div class="pay-detail-row">
+          <span>Delivering to</span>
+          <span>{{ order.city }}</span>
+        </div>
+      </div> -->
+
+      <form method="post" class="pay-form" action="{{ url_for('shop.process_payment', order_id=order.unique_id) }}">
+        <input type="hidden" name="csrf_token" value="">
+
+        <div class="pay-confirm">
+          {{ form.mpesa_code.label }}
+          <p class="pay-confirm-help">
+            Enter the 10-character code from your M-Pesa confirmation SMS
+            (e.g. <code>QGH7X2Y8P9</code>) so we can verify your payment.
+          </p>
+          {{ form.mpesa_code(placeholder="QGH7X2Y8P9", class="form-control pay-confirm-input") }}
+        </div>
+
+        <button type="submit" name="action" value="complete" class="btn btn-primary pay-complete-btn">
+          <i class="bi bi-check-circle me-1"></i>
+          I've Paid — Complete Order
+        </button>
+        <button type="submit" name="action" value="cancel" class="btn btn-outline pay-cancel-btn">
+          Cancel
+        </button>
+      </form>
+
+      <p class="pay-fineprint">
+        Payments are verified manually within 1 business day.
+        Need help? Email <a href="mailto:hello@marilynkamuru.com">hello@marilynkamuru.com</a>.
+      </p>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    'use strict';
+
+    const copyBtn = document.getElementById('copyPochiBtn');
+    const phoneEl = document.getElementById('pochiPhone');
+    if (!copyBtn || !phoneEl) return;
+
+    const originalHTML = copyBtn.innerHTML;
+
+    copyBtn.addEventListener('click', async () => {
+      const raw = (copyBtn.dataset.copy || '').replace(/\s+/g, '');
+      try {
+        await navigator.clipboard.writeText(raw);
+      } catch {
+        // Fallback for browsers without clipboard API
+        const tmp = document.createElement('textarea');
+        tmp.value = raw;
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand('copy');
+        tmp.remove();
+      }
+
+      copyBtn.classList.add('is-copied');
+      copyBtn.innerHTML = '<i class="bi bi-check2"></i><span>Copied</span>';
+      setTimeout(() => {
+        copyBtn.classList.remove('is-copied');
+        copyBtn.innerHTML = originalHTML;
+      }, 1800);
+    });
+  })();
+</script>
+{% endblock %}

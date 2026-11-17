@@ -1,0 +1,372 @@
+{% extends "base.html" %}
+
+{% block title %}
+Unconstitutional · Marilyn Muthoni Kamuru{% endblock %}
+
+{% block meta_description %}
+How the Supreme Court sabotaged the implementation of the Constitution of Kenya 2010. A collection of articles by
+Marilyn Muthoni Kamuru, 2016 - 2026.
+{% endblock %}
+
+{% block body_class %}
+book-landing
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/book_landing.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="bl-hero">
+  <div class="bl-brushstroke" aria-hidden="true"></div>
+
+  <div class="container bl-hero-grid">
+
+    <div class="bl-hero-copy reveal">
+
+      <h1 class="bl-title" aria-label="Unconstitutional">
+        <span class="bl-title-un">UN</span>
+        <span class="bl-title-rest">constitutional</span>
+      </h1>
+
+      <p class="bl-tagline">
+        How the Supreme Court sabotaged the implementation of the
+        Constitution of Kenya 2010.
+      </p>
+
+      <p class="bl-byline">
+        by <strong>Marilyn Muthoni Kamuru</strong>
+      </p>
+
+      <div class="bl-hero-cta">
+        <a href="#preorder" class="btn btn-primary">Notify me on launch</a>
+      </div>
+
+      <ul class="bl-specs">
+        <li>
+          <span class="bl-spec-label">Publication</span>
+          <span class="bl-spec-value">Upcoming · 2026</span>
+        </li>
+        <li>
+          <span class="bl-spec-label">Format</span>
+          <span class="bl-spec-value">Hardcover · Paperback · eBook</span>
+        </li>
+        <li>
+          <span class="bl-spec-label">Language</span>
+          <span class="bl-spec-value">English</span>
+        </li>
+        <li>
+          <span class="bl-spec-label">Category</span>
+          <span class="bl-spec-value">Constitutional Law · Gender &amp; Politics</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="bl-hero-cover reveal">
+      <div class="bl-cover-wrap">
+        <img src="{{ url_for('static', filename='images/UC by MMK Cover-Front.webp') }}" alt="{{ p_full_name }}">
+        <div class="bl-cover-shadow" aria-hidden="true"></div>
+      </div>
+
+      <p class="bl-cover-caption">
+        <i class="bi bi-bookmark-star"></i>
+        Upcoming · 2026
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<section class="bl-pullquote-section">
+  <div class="container">
+    <blockquote class="bl-pullquote reveal">
+      <i class="bi bi-quote bl-pullquote-mark" aria-hidden="true"></i>
+      <p>
+        What is our recourse when the Supreme Court gets it wrong?
+        Marilyn Kamuru makes the novel argument that anti-constitutional
+        judgments lack the force of law, and that Chapter 1 restores
+        constitutional supremacy by allowing the people to be unbound by
+        such judgments.
+      </p>
+      <footer>
+        <strong>Walkwa Wanyoike</strong>
+        <span>Constitutional Lawyer</span>
+      </footer>
+    </blockquote>
+  </div>
+</section>
+
+<section class="bl-about" id="about">
+  <div class="container bl-about-grid">
+
+    <div class="bl-about-main reveal">
+      <span class="eyebrow">About the book</span>
+      <h2 class="bl-section-title">
+        A decade of constitutional violations - and a case for why they cannot stand.
+      </h2>
+
+      <p class="bl-about-para">
+        In this collection of articles written over a decade - from 2016 to
+        2026 - Marilyn documents the violations of Article 27(8) of the Bill
+        of Rights by, among others, the Supreme Court, Parliament, and the
+        Executive. In addition to providing an important record of the
+        unconstitutionality perpetrated by institutions of the State, Marilyn
+        interrogates the basis of these decisions and questions the
+        normalised state of unconstitutionality in Kenya today.
+      </p>
+
+      <p class="bl-about-para">
+        Marilyn makes important arguments about the non-negotiability of
+        women citizens to Kenya's constitutional democracy post-2010.
+      </p>
+
+      <div class="bl-core">
+        <span class="bl-core-label">The central argument</span>
+        <p>
+          At the core of her argument is that women are sovereign - and that
+          all branches of government (the executive, parliament, and the
+          judiciary) lack the constitutional authority to derogate from this
+          sovereignty.
+        </p>
+      </div>
+    </div>
+
+    <aside class="bl-about-side reveal">
+      <div class="bl-specs-card">
+        <h3>Publication details</h3>
+        <dl>
+          <dt>Publication</dt>
+          <dd>Forthcoming · 2026</dd>
+
+          <dt>Format</dt>
+          <dd>Hardcover · Paperback · eBook</dd>
+
+          <dt>Language</dt>
+          <dd>English</dd>
+
+          <dt>Category</dt>
+          <dd>Constitutional Law · Gender &amp; Politics</dd>
+
+          <dt>Pages</dt>
+          <dd>TBA</dd>
+        </dl>
+        <a href="#preorder" class="btn btn-primary btn-sm bl-specs-cta">
+          Join the launch list
+        </a>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<section class="bl-foreword">
+  <div class="container">
+    <div class="bl-foreword-inner reveal">
+      <span class="eyebrow eyebrow-light">Excerpt from the foreword</span>
+      <blockquote class="bl-foreword-quote">
+        <i class="bi bi-quote" aria-hidden="true"></i>
+        <p>
+          In my view the valid question asked here about the implementation
+          of the Constitution is fundamentally political. Kenya does not
+          have a political leadership that is committed to the
+          implementation of the Constitution.
+        </p>
+      </blockquote>
+      <footer class="bl-foreword-attr">
+        <strong>Dr. Willy Mutunga</strong>
+        <span>Chief Justice &amp; President, Supreme Court of Kenya, 2011–2016</span>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="bl-author">
+  <div class="container">
+    <div class="bl-author-grid reveal">
+
+      <div class="bl-author-photo">
+        {% if profile and profile.profile_image %}
+        <img src="{{ profile.profile_image | img }}" alt="Marilyn Muthoni Kamuru">
+        {% else %}
+        <img src="{{ url_for('static', filename='images/placeholder.svg') }}" alt="Marilyn Muthoni Kamuru">
+        {% endif %}
+      </div>
+
+      <div class="bl-author-bio">
+        <span class="eyebrow">The Author</span>
+        <h2 class="bl-section-title bl-author-name">Marilyn Muthoni Kamuru</h2>
+
+        <p>
+          Marilyn Muthoni Kamuru is a feminist lawyer, writer, and political
+          strategist. In 2021 she was recognised as one of the 100 most
+          influential people in Gender Policy by Apolitical.
+        </p>
+        <p>
+          She was the lead petitioner in the 2016 precedent-setting case
+          where the High Court held the Cabinet unconstitutional for its
+          violation of the not-more-than-two-thirds gender principle, and is
+          a founding member of #WeAre52pc, the feminist collective that was
+          the first to petition Chief Justice Maraga for the dissolution of
+          Parliament in 2017.
+        </p>
+        <p>
+          Marilyn holds a Bachelor of Arts in Political Science from
+          Northeastern University and a J.D. and LL.M in International and
+          Comparative Law from Cornell Law School.
+        </p>
+
+        <a href="{{ url_for('home.index') }}" class="link-arrow bl-author-link">
+          Read her full story <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section> -->
+
+<section class="bl-preorder" id="preorder">
+  <div class="container bl-preorder-inner reveal">
+    <div class="bl-preorder-copy">
+      <span class="eyebrow eyebrow-light">Coming 2026</span>
+      <h2 class="bl-preorder-title">Be the first to read it.</h2>
+      <p class="bl-preorder-body">
+        <em>Unconstitutional</em> will be published in 2026. Join the launch
+        list and we'll let you know the moment pre-orders open.
+      </p>
+    </div>
+
+    <form class="bl-preorder-form" action="{{ url_for('home.index') }}#contact" method="GET">
+      <label for="preorder-email" class="visually-hidden">Email address</label>
+      <input type="email" id="preorder-email" name="email" class="bl-preorder-input" placeholder="you@example.com"
+        required>
+      <button type="submit" class="btn btn-light bl-preorder-btn">
+        Notify me
+      </button>
+    </form>
+
+    <p class="bl-preorder-fineprint">
+      No spam — just one email when pre-orders open.
+      Or write directly to <a href="mailto:kamurumm@gmail.com">kamurumm@gmail.com</a>.
+    </p>
+  </div>
+</section>
+
+<!-- <section class="bl-related">
+  <div class="container">
+    <div class="bl-related-head reveal">
+      <div>
+        <span class="eyebrow">More from Marilyn</span>
+        <h2 class="bl-section-title" style="margin-bottom: 0;">Selected writings</h2>
+      </div>
+      <a href="{{ url_for('shop.catalogue') }}" class="link-arrow">
+        All books <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="bl-related-grid">
+      <a href="#" class="bl-related-card reveal">
+        <div class="bl-related-cover cover-dark">
+          <div class="bl-related-cover-text">
+            The<br>Missing<br>Piece
+            <div class="bl-related-cover-sub">Gender Parity · 2018</div>
+          </div>
+        </div>
+        <div class="bl-related-info">
+          <h4>The Missing Piece</h4>
+          <span>Chapter in <em>Where Women Are</em> · 2018</span>
+        </div>
+      </a>
+
+      <a href="#" class="bl-related-card reveal">
+        <div class="bl-related-cover cover-brass">
+          <div class="bl-related-cover-text">
+            The<br>Menopause<br>When We<br>Are Free
+            <div class="bl-related-cover-sub">Essay · 2023</div>
+          </div>
+        </div>
+        <div class="bl-related-info">
+          <h4>The Menopause When We Are Free</h4>
+          <span>In <em>Bloody Hell!</em>, ed. Mona Eltahawy · 2023</span>
+        </div>
+      </a>
+
+      <a href="#" class="bl-related-card reveal">
+        <div class="bl-related-cover cover-gold">
+          <span class="bl-related-badge">Forthcoming · 2027</span>
+          <div class="bl-related-cover-text">
+            African<br>Feminist
+            <div class="bl-related-cover-sub">Bloomsbury Academic</div>
+          </div>
+        </div>
+        <div class="bl-related-info">
+          <h4>African Feminist</h4>
+          <span>Reflections on Gender Quotas in Kenya · 2027</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section> -->
+
+<section class="section" id="shop">
+  <div class="container">
+    <div class="section-head-split reveal">
+      <div>
+        <span class="eyebrow">Shop</span>
+        <h2 class="section-title" style="margin-bottom: 0;">Branded merchandise</h2>
+      </div>
+      <a href="{{ url_for('shop.catalogue') }}" class="link-arrow">Shop all <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <div class="merch-grid">
+      {% if featured_merch %}
+      {% for m in featured_merch %}
+      <a href="#" class="merch-card reveal">
+        <div class="merch-img">
+          {% if m.image %}
+          <img src="{{ m.image | img }}" alt="{{ m.name }}">
+          {% else %}
+          <img
+            src="{{ url_for('static', filename='images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp') }}"
+            alt="{{ m.name }}">
+          {% endif %}
+        </div>
+        <div class="merch-info">
+          <h4>{{ m.name }}</h4>
+          <span class="price">Ksh 1,000</span>
+        </div>
+      </a>
+      {% endfor %}
+      {% else %}
+      <a href="#" class="merch-card reveal">
+        <div class="merch-img"><img loading="lazy"
+            src="{{ url_for('static', filename='images/tote-bag-mockup-of-a-pretty-woman-in-the-street-26692.webp') }}"
+            alt="Signature Tote"></div>
+        <div class="merch-info">
+          <h4>Signature Tote</h4><span class="price">KSh 1,600</span>
+        </div>
+      </a>
+      <a href="#" class="merch-card reveal">
+        <div class="merch-img"><img loading="lazy"
+            src="{{ url_for('static', filename='images/back-view-mockup-of-a-woman-wearing-a-bella-canvas-t-shirt-m39788.webp') }}"
+            alt="Writer Shirt"></div>
+        <div class="merch-info">
+          <h4>Writer Shirt</h4><span class="price">KSh 4,200</span>
+        </div>
+      </a>
+      <a href="#" class="merch-card reveal">
+        <div class="merch-img"><img loading="lazy"
+            src="{{ url_for('static', filename='images/Unconstitutional Hardcover Book - Version.webp') }}"
+            alt="Notebook Set">
+        </div>
+        <div class="merch-info">
+          <h4>Notebook Set</h4><span class="price">KSh 900</span>
+        </div>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}
