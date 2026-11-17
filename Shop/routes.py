@@ -286,7 +286,10 @@ def process_payment(order_id):
 
 @shop.route("/payment-confirmation/<int:payment_id>")
 def payment_confirmation(payment_id):
-  payment = Payment.query.filter_by(status="Pending", unique_id=payment_id).first()
+  payment = Payment.query.filter_by(status="pending", unique_id=payment_id).first()
+  if not payment:
+    flash("Payment not found", "danger")
+    return redirect(url_for('shop.catalogue'))
 
   context = {
     "payment": payment,
